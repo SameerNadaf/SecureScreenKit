@@ -1,47 +1,38 @@
 //
-//  SecureContainerView.swift
+//  RecordingOverlayView.swift
 //  SecureScreenKit
 //
-//  UIKit container view that protects its content from screen capture
+//  UIKit container view with recording protection overlay
 //
 
 import UIKit
 import Combine
 
-/// A UIView container that protects its content from screen capture.
+/// A UIView container that shows a protection overlay during screen recording.
 ///
-/// `SecureContainerView` wraps your sensitive content and applies protection
-/// based on the specified policy when screen capture is detected.
+/// `RecordingOverlayView` wraps your sensitive content and applies a visual overlay
+/// (blur, blackout, or blocking message) when screen recording is detected.
 ///
 /// ## Example Usage
 ///
 /// ### Basic Protection
 /// ```swift
-/// let secureContainer = SecureContainerView()
-/// secureContainer.addProtectedSubview(sensitiveView)
-/// view.addSubview(secureContainer)
+/// let recordingOverlay = RecordingOverlayView()
+/// recordingOverlay.addProtectedSubview(sensitiveView)
+/// view.addSubview(recordingOverlay)
 /// ```
 ///
 /// ### Custom Policy
 /// ```swift
-/// let secureContainer = SecureContainerView(policy: .obscure(style: .blur(radius: 25)))
-/// secureContainer.addProtectedSubview(bankAccountView)
-/// ```
-///
-/// ### Conditional Protection
-/// ```swift
-/// let secureContainer = SecureContainerView(
-///     policy: .block(reason: "Recording not allowed"),
-///     condition: RecordingOnlyCondition()
-/// )
-/// secureContainer.addProtectedSubview(medicalRecordsView)
+/// let recordingOverlay = RecordingOverlayView(policy: .obscure(style: .blur(radius: 25)))
+/// recordingOverlay.addProtectedSubview(bankAccountView)
 /// ```
 @MainActor
-public class SecureContainerView: UIView {
+public class RecordingOverlayView: UIView {
     
     // MARK: - Properties
     
-    /// The protection policy to apply when capture is detected.
+    /// The protection policy to apply when recording is detected.
     public var policy: CapturePolicy {
         didSet {
             updateProtection()
@@ -81,12 +72,12 @@ public class SecureContainerView: UIView {
     
     // MARK: - Initialization
     
-    /// Creates a secure container with default policy from configuration.
+    /// Creates a recording overlay view with default policy from configuration.
     public convenience init() {
         self.init(policy: SecureScreenConfiguration.shared.defaultPolicy)
     }
     
-    /// Creates a secure container with a specified policy.
+    /// Creates a recording overlay view with a specified policy.
     ///
     /// - Parameter policy: The protection policy to apply.
     public init(policy: CapturePolicy) {
@@ -95,7 +86,7 @@ public class SecureContainerView: UIView {
         setup()
     }
     
-    /// Creates a secure container with policy and condition.
+    /// Creates a recording overlay view with policy and condition.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
@@ -124,7 +115,7 @@ public class SecureContainerView: UIView {
     
     // MARK: - Public Methods
     
-    /// Adds a subview that will be protected from screen capture.
+    /// Adds a subview that will be protected from screen recording.
     ///
     /// - Parameter view: The view to protect.
     public func addProtectedSubview(_ view: UIView) {
@@ -147,7 +138,7 @@ public class SecureContainerView: UIView {
         startMonitoring()
     }
     
-    /// Starts monitoring for screen capture events.
+    /// Starts monitoring for screen recording events.
     public func startMonitoring() {
         guard !isMonitoring else { return }
         isMonitoring = true
@@ -163,7 +154,7 @@ public class SecureContainerView: UIView {
         updateProtection()
     }
     
-    /// Stops monitoring for screen capture events.
+    /// Stops monitoring for screen recording events.
     public func stopMonitoring() {
         isMonitoring = false
         cancellables.removeAll()
@@ -319,3 +310,8 @@ public class SecureContainerView: UIView {
         super.removeFromSuperview()
     }
 }
+
+// MARK: - Deprecated Alias for Backward Compatibility
+
+@available(*, deprecated, renamed: "RecordingOverlayView")
+public typealias SecureContainerView = RecordingOverlayView

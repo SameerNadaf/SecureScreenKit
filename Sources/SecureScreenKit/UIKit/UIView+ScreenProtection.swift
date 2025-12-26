@@ -1,8 +1,8 @@
 //
-//  UIView+Secure.swift
+//  UIView+ScreenProtection.swift
 //  SecureScreenKit
 //
-//  Enterprise-grade screen capture protection for iOS
+//  Extensions for screen protection on UIView and UIViewController
 //
 
 import UIKit
@@ -22,7 +22,6 @@ public extension UIView {
         static var overlayView = "overlayView"
         static var cancellables = "cancellables"
         static var policy = "policy"
-        static var condition = "condition"
     }
     
     // MARK: - Properties
@@ -48,7 +47,7 @@ public extension UIView {
     }
     
     /// Cancellables for Combine subscriptions.
-    private var secureCancellables: Set<AnyCancellable> {
+    private var screenProtectionCancellables: Set<AnyCancellable> {
         get {
             objc_getAssociatedObject(self, &AssociatedKeys.cancellables) as? Set<AnyCancellable> ?? Set<AnyCancellable>()
         }
@@ -58,7 +57,7 @@ public extension UIView {
     }
     
     /// The current protection policy for this view.
-    private(set) var securePolicy: CapturePolicy? {
+    private(set) var recordingProtectionPolicy: CapturePolicy? {
         get {
             objc_getAssociatedObject(self, &AssociatedKeys.policy) as? CapturePolicy
         }
@@ -67,9 +66,9 @@ public extension UIView {
         }
     }
     
-    // MARK: - Secure Text Container
+    // MARK: - Screenshot Protection (Secure Text Container)
     
-    /// Wraps this view in a secure text container that hides content during capture.
+    /// Wraps this view in a screenshot-proof container.
     ///
     /// This technique uses `UITextField.isSecureTextEntry` which causes iOS
     /// to exclude the content from screen captures. This is the most reliable
@@ -82,9 +81,9 @@ public extension UIView {
     ///
     /// - Returns: The secure container view that now hosts this view.
     @discardableResult
-    func wrapInSecureContainer() -> UIView {
+    func wrapInScreenshotProofContainer() -> UIView {
         // Remove any existing container
-        removeFromSecureContainer()
+        removeFromScreenshotProofContainer()
         
         // Create the secure text field (hidden but functional)
         let secureTextField = UITextField()
@@ -142,8 +141,8 @@ public extension UIView {
         return container
     }
     
-    /// Removes this view from its secure container.
-    func removeFromSecureContainer() {
+    /// Removes this view from its screenshot-proof container.
+    func removeFromScreenshotProofContainer() {
         guard let container = secureContainer else { return }
         
         // Restore this view's layer to a normal view
@@ -157,28 +156,28 @@ public extension UIView {
         self.secureContainer = nil
     }
     
-    // MARK: - Overlay Protection
+    // MARK: - Recording Overlay Protection
     
-    /// Enables capture protection on this view with the specified policy.
+    /// Enables recording protection on this view with the specified policy.
     ///
-    /// When screen capture is detected, an overlay matching the policy
+    /// When screen recording is detected, an overlay matching the policy
     /// will be shown over this view.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
     ///   - condition: Optional condition for conditional protection.
-    func enableCaptureProtection(
+    func enableRecordingProtection(
         policy: CapturePolicy,
         condition: (any CaptureCondition)? = nil
     ) {
         // Store policy
-        securePolicy = policy
+        recordingProtectionPolicy = policy
         
         // Cancel any existing subscriptions
-        secureCancellables.removeAll()
+        screenProtectionCancellables.removeAll()
         
         // Subscribe to capture state changes
-        var cancellables = self.secureCancellables
+        var cancellables = self.screenProtectionCancellables
         
         Task { @MainActor [weak self] in
             guard let self = self else { return }
@@ -186,27 +185,27 @@ public extension UIView {
             CaptureMonitor.shared.$captureState
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] _ in
-                    self?.updateViewProtection(policy: policy, condition: condition)
+                    self?.updateRecordingOverlay(policy: policy, condition: condition)
                 }
                 .store(in: &cancellables)
             
-            self.secureCancellables = cancellables
+            self.screenProtectionCancellables = cancellables
             
             // Initial check
-            self.updateViewProtection(policy: policy, condition: condition)
+            self.updateRecordingOverlay(policy: policy, condition: condition)
         }
     }
     
-    /// Disables capture protection on this view.
-    func disableCaptureProtection() {
-        secureCancellables.removeAll()
-        securePolicy = nil
-        removeProtectionOverlay()
+    /// Disables recording protection on this view.
+    func disableRecordingProtection() {
+        screenProtectionCancellables.removeAll()
+        recordingProtectionPolicy = nil
+        removeRecordingOverlay()
     }
     
     // MARK: - Private Methods
     
-    private func updateViewProtection(
+    private func updateRecordingOverlay(
         policy: CapturePolicy,
         condition: (any CaptureCondition)?
     ) {
@@ -217,16 +216,16 @@ public extension UIView {
             let action = engine.resolvePolicy(policy, condition: condition)
             
             if action.requiresAction {
-                self.showProtectionOverlay(for: action)
+                self.showRecordingOverlay(for: action)
             } else {
-                self.removeProtectionOverlay()
+                self.removeRecordingOverlay()
             }
         }
     }
     
-    private func showProtectionOverlay(for action: ResolvedAction) {
+    private func showRecordingOverlay(for action: ResolvedAction) {
         // Remove existing overlay
-        removeProtectionOverlay()
+        removeRecordingOverlay()
         
         let overlay: UIView
         
@@ -235,13 +234,13 @@ public extension UIView {
             return
             
         case .obscure(let style):
-            overlay = createObscureOverlay(style: style)
+            overlay = createObscureOverlayForView(style: style)
             
         case .block(let reason):
-            overlay = createBlockingOverlay(reason: reason)
+            overlay = createBlockingOverlayForView(reason: reason)
             
         case .logout:
-            overlay = createBlockingOverlay(reason: "Session ended")
+            overlay = createBlockingOverlayForView(reason: "Session ended")
         }
         
         overlay.translatesAutoresizingMaskIntoConstraints = false
@@ -257,12 +256,12 @@ public extension UIView {
         self.protectionOverlay = overlay
     }
     
-    private func removeProtectionOverlay() {
+    private func removeRecordingOverlay() {
         protectionOverlay?.removeFromSuperview()
         protectionOverlay = nil
     }
     
-    private func createObscureOverlay(style: ObscureStyle) -> UIView {
+    private func createObscureOverlayForView(style: ObscureStyle) -> UIView {
         switch style {
         case .blur(let radius):
             let blurStyle: UIBlurEffect.Style = radius < 15 ? .systemThinMaterial : .systemThickMaterial
@@ -279,7 +278,7 @@ public extension UIView {
         }
     }
     
-    private func createBlockingOverlay(reason: String?) -> UIView {
+    private func createBlockingOverlayForView(reason: String?) -> UIView {
         let container = UIView()
         container.backgroundColor = .black.withAlphaComponent(0.9)
         
@@ -305,23 +304,71 @@ public extension UIView {
 
 public extension UIViewController {
     
-    /// Configures screen capture protection for this view controller.
+    /// Configures recording protection for this view controller.
     ///
     /// This method adds capture monitoring and will show an overlay
-    /// when screen capture is detected, based on the specified policy.
+    /// when screen recording is detected, based on the specified policy.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
     ///   - condition: Optional condition for conditional protection.
+    func protectFromRecording(
+        policy: CapturePolicy,
+        condition: (any CaptureCondition)? = nil
+    ) {
+        view.enableRecordingProtection(policy: policy, condition: condition)
+    }
+    
+    /// Removes recording protection from this view controller.
+    func removeRecordingProtection() {
+        view.disableRecordingProtection()
+    }
+}
+
+// MARK: - Deprecated Aliases for Backward Compatibility
+
+public extension UIView {
+    @available(*, deprecated, renamed: "enableRecordingProtection(policy:condition:)")
+    func enableCaptureProtection(
+        policy: CapturePolicy,
+        condition: (any CaptureCondition)? = nil
+    ) {
+        enableRecordingProtection(policy: policy, condition: condition)
+    }
+    
+    @available(*, deprecated, renamed: "disableRecordingProtection()")
+    func disableCaptureProtection() {
+        disableRecordingProtection()
+    }
+    
+    @available(*, deprecated, renamed: "wrapInScreenshotProofContainer()")
+    @discardableResult
+    func wrapInSecureContainer() -> UIView {
+        wrapInScreenshotProofContainer()
+    }
+    
+    @available(*, deprecated, renamed: "removeFromScreenshotProofContainer()")
+    func removeFromSecureContainer() {
+        removeFromScreenshotProofContainer()
+    }
+    
+    @available(*, deprecated, renamed: "recordingProtectionPolicy")
+    var securePolicy: CapturePolicy? {
+        recordingProtectionPolicy
+    }
+}
+
+public extension UIViewController {
+    @available(*, deprecated, renamed: "protectFromRecording(policy:condition:)")
     func secure(
         policy: CapturePolicy,
         condition: (any CaptureCondition)? = nil
     ) {
-        view.enableCaptureProtection(policy: policy, condition: condition)
+        protectFromRecording(policy: policy, condition: condition)
     }
     
-    /// Removes screen capture protection from this view controller.
+    @available(*, deprecated, renamed: "removeRecordingProtection()")
     func removeSecure() {
-        view.disableCaptureProtection()
+        removeRecordingProtection()
     }
 }

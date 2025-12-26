@@ -1,5 +1,5 @@
 //
-//  SecureContentView.swift
+//  ScreenshotProofView.swift
 //  SecureScreenKit
 //
 //  Uses UITextField.isSecureTextEntry trick to hide content from screenshots
@@ -11,8 +11,7 @@ import UIKit
 /// A SwiftUI view that hides its content from screenshots and screen recordings.
 ///
 /// This view uses the `UITextField.isSecureTextEntry` technique to make content
-/// invisible in screen captures. Unlike `SecureContainer` which shows an overlay,
-/// this view makes the content **actually invisible** in the captured image.
+/// invisible in screen captures. The content **actually becomes invisible** in the captured image.
 ///
 /// ## How It Works
 /// iOS excludes the secure text entry layer from screen captures. By placing
@@ -20,7 +19,7 @@ import UIKit
 ///
 /// ## Example Usage
 /// ```swift
-/// SecureContentView {
+/// ScreenshotProofView {
 ///     Text("This text will not appear in screenshots!")
 ///         .font(.title)
 /// }
@@ -34,11 +33,11 @@ import UIKit
 /// - Important: This is the closest iOS allows to "screenshot-proof" content,
 ///   but it's not officially supported by Apple for this purpose.
 @available(iOS 14.0, *)
-public struct SecureContentView<Content: View>: View {
+public struct ScreenshotProofView<Content: View>: View {
     
     private let content: Content
     
-    /// Creates a secure content view.
+    /// Creates a screenshot-proof view.
     ///
     /// - Parameter content: The content to hide from screenshots.
     public init(@ViewBuilder content: () -> Content) {
@@ -46,17 +45,17 @@ public struct SecureContentView<Content: View>: View {
     }
     
     public var body: some View {
-        SecureFieldContainer {
+        ScreenshotSecureFieldWrapper {
             content
         }
     }
 }
 
-// MARK: - Secure Field Container
+// MARK: - Secure Field Wrapper
 
 /// A UIViewRepresentable that wraps content in a secure text field's layer.
 @available(iOS 14.0, *)
-internal struct SecureFieldContainer<Content: View>: UIViewRepresentable {
+internal struct ScreenshotSecureFieldWrapper<Content: View>: UIViewRepresentable {
     
     let content: Content
     
@@ -64,8 +63,8 @@ internal struct SecureFieldContainer<Content: View>: UIViewRepresentable {
         self.content = content()
     }
     
-    func makeUIView(context: Context) -> SecureFieldContainerView {
-        let view = SecureFieldContainerView()
+    func makeUIView(context: Context) -> ScreenshotSecureContainerView {
+        let view = ScreenshotSecureContainerView()
         
         // Create hosting controller for SwiftUI content
         let hostingController = UIHostingController(rootView: content)
@@ -81,7 +80,7 @@ internal struct SecureFieldContainer<Content: View>: UIViewRepresentable {
         return view
     }
     
-    func updateUIView(_ uiView: SecureFieldContainerView, context: Context) {
+    func updateUIView(_ uiView: ScreenshotSecureContainerView, context: Context) {
         context.coordinator.hostingController?.rootView = content
     }
     
@@ -94,11 +93,11 @@ internal struct SecureFieldContainer<Content: View>: UIViewRepresentable {
     }
 }
 
-// MARK: - Secure Field Container View
+// MARK: - Secure Container View
 
 /// UIView that uses secure text field trick to hide content from screenshots.
 @available(iOS 14.0, *)
-internal class SecureFieldContainerView: UIView {
+internal class ScreenshotSecureContainerView: UIView {
     
     private let textField = UITextField()
     private weak var secureLayer: CALayer?
@@ -139,7 +138,6 @@ internal class SecureFieldContainerView: UIView {
     
     private func findAndStoreSecureLayer() {
         // The secure layer is typically in the text field's subviews
-        // Look for _UITextLayoutCanvasView or similar
         if let secureLayer = findSecureLayer(in: textField) {
             self.secureLayer = secureLayer
         }
@@ -192,7 +190,7 @@ internal class SecureFieldContainerView: UIView {
     }
 }
 
-// MARK: - Alternative: Pure UIKit Implementation
+// MARK: - Pure UIKit Implementation
 
 /// A UIView that hides its content from screenshots and screen recordings.
 ///
@@ -200,12 +198,12 @@ internal class SecureFieldContainerView: UIView {
 ///
 /// ## Example Usage
 /// ```swift
-/// let secureView = SecureUIView()
-/// secureView.addSecureSubview(mySecretLabel)
-/// view.addSubview(secureView)
+/// let screenshotProofView = ScreenshotProofUIView()
+/// screenshotProofView.addSecureSubview(mySecretLabel)
+/// view.addSubview(screenshotProofView)
 /// ```
 @available(iOS 14.0, *)
-public class SecureUIView: UIView {
+public class ScreenshotProofUIView: UIView {
     
     private let secureTextField = UITextField()
     private var contentContainer: UIView?
@@ -301,16 +299,34 @@ public extension View {
     /// ## Example
     /// ```swift
     /// Text("Secret PIN: 1234")
-    ///     .screenshotProof()
+    ///     .screenshotProtected()
     /// ```
     ///
     /// - Warning: This relies on undocumented iOS behavior and may not work
     ///   in all scenarios or future iOS versions.
     ///
     /// - Returns: A view that is hidden from screen captures.
-    func screenshotProof() -> some View {
-        SecureContentView {
+    func screenshotProtected() -> some View {
+        ScreenshotProofView {
             self
         }
+    }
+}
+
+// MARK: - Deprecated Aliases for Backward Compatibility
+
+@available(iOS 14.0, *)
+@available(*, deprecated, renamed: "ScreenshotProofView")
+public typealias SecureContentView = ScreenshotProofView
+
+@available(iOS 14.0, *)
+@available(*, deprecated, renamed: "ScreenshotProofUIView")
+public typealias SecureUIView = ScreenshotProofUIView
+
+@available(iOS 14.0, *)
+public extension View {
+    @available(*, deprecated, renamed: "screenshotProtected")
+    func screenshotProof() -> some View {
+        screenshotProtected()
     }
 }

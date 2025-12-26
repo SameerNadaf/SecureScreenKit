@@ -1,5 +1,5 @@
 //
-//  SecureCombinedView.swift
+//  ScreenProtectedUIView.swift
 //  SecureScreenKit
 //
 //  Complete protection: hides content from BOTH screenshots AND recordings (UIKit)
@@ -10,21 +10,21 @@ import Combine
 
 /// A UIView container that provides COMPLETE protection for its content.
 ///
-/// `SecureCombinedView` combines two protection techniques:
+/// `ScreenProtectedUIView` combines two protection techniques:
 /// 1. **Screenshot Protection**: Uses `isSecureTextEntry` trick to make content invisible in screenshots
 /// 2. **Recording Protection**: Shows overlay during screen recording
 ///
 /// ## Example Usage
 /// ```swift
-/// let secureView = SecureCombinedView()
-/// secureView.addSecureContent(sensitiveView)
-/// view.addSubview(secureView)
+/// let protectedView = ScreenProtectedUIView()
+/// protectedView.addSecureContent(sensitiveView)
+/// view.addSubview(protectedView)
 /// ```
 ///
 /// - Important: Content inside this view will be hidden from BOTH screenshots AND screen recordings.
 @available(iOS 14.0, *)
 @MainActor
-public class SecureCombinedView: UIView {
+public class ScreenProtectedUIView: UIView {
     
     // MARK: - Properties
     
@@ -48,12 +48,12 @@ public class SecureCombinedView: UIView {
     
     // MARK: - Initialization
     
-    /// Creates a combined secure view with default blur policy.
+    /// Creates a screen-protected view with default blur policy.
     public convenience init() {
         self.init(policy: .obscure(style: .blur(radius: 25)))
     }
     
-    /// Creates a combined secure view with a custom policy.
+    /// Creates a screen-protected view with a custom policy.
     ///
     /// - Parameter policy: The policy to apply during screen recording.
     public init(policy: CapturePolicy) {
@@ -155,7 +155,7 @@ public class SecureCombinedView: UIView {
         contentContainer = view
         
         // Move to secure layer if available (for screenshot protection)
-        if let secureLayer = secureLayer {
+        if secureLayer != nil {
             moveContentToSecureLayer(view)
         }
         
@@ -339,3 +339,9 @@ public class SecureCombinedView: UIView {
         super.removeFromSuperview()
     }
 }
+
+// MARK: - Deprecated Alias for Backward Compatibility
+
+@available(iOS 14.0, *)
+@available(*, deprecated, renamed: "ScreenProtectedUIView")
+public typealias SecureCombinedView = ScreenProtectedUIView

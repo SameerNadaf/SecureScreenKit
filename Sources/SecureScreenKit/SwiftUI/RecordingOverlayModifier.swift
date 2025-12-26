@@ -1,24 +1,24 @@
 //
-//  SecureViewModifier.swift
+//  RecordingOverlayModifier.swift
 //  SecureScreenKit
 //
-//  Enterprise-grade screen capture protection for iOS
+//  View modifier for recording protection overlay
 //
 
 import SwiftUI
 
-/// View modifier that adds screen capture protection to any view.
+/// View modifier that adds recording protection overlay to any view.
 ///
-/// This modifier wraps the view in protection logic that responds to
-/// screen capture events based on the specified policy and conditions.
+/// This modifier wraps the view in protection logic that shows an overlay
+/// when screen recording is detected, based on the specified policy.
 ///
 /// ## Usage
-/// Apply protection using the `.secureContent()` modifier:
+/// Apply protection using the `.recordingProtected()` modifier:
 /// ```swift
 /// Text("Secret Data")
-///     .secureContent(policy: .obscure(style: .blur(radius: 20)))
+///     .recordingProtected(policy: .obscure(style: .blur(radius: 20)))
 /// ```
-public struct SecureViewModifier: ViewModifier {
+public struct RecordingOverlayModifier: ViewModifier {
     
     // MARK: - Properties
     
@@ -29,7 +29,7 @@ public struct SecureViewModifier: ViewModifier {
     
     // MARK: - Initialization
     
-    /// Creates a secure view modifier.
+    /// Creates a recording overlay modifier.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
@@ -51,7 +51,7 @@ public struct SecureViewModifier: ViewModifier {
     // MARK: - ViewModifier
     
     public func body(content: Content) -> some View {
-        SecureContainer(
+        RecordingOverlayContainer(
             policy: policy,
             condition: condition,
             screenIdentifier: screenIdentifier,
@@ -66,29 +66,29 @@ public struct SecureViewModifier: ViewModifier {
 
 public extension View {
     
-    /// Protects this view's content from screen capture.
+    /// Protects this view with an overlay during screen recording.
     ///
-    /// When screen capture is detected, the view will be obscured or blocked
-    /// according to the specified policy.
+    /// When screen recording is detected, an overlay matching the policy
+    /// will be shown over this view.
     ///
     /// ## Example Usage
     ///
     /// ### Default Policy
     /// ```swift
     /// SensitiveView()
-    ///     .secureContent()
+    ///     .recordingProtected()
     /// ```
     ///
     /// ### Custom Policy
     /// ```swift
     /// BankingView()
-    ///     .secureContent(policy: .block(reason: "Banking data protected"))
+    ///     .recordingProtected(policy: .block(reason: "Banking data protected"))
     /// ```
     ///
     /// ### Conditional Protection
     /// ```swift
     /// PatientRecords()
-    ///     .secureContent(
+    ///     .recordingProtected(
     ///         policy: .obscure(style: .blur(radius: 30)),
     ///         condition: RecordingOnlyCondition()
     ///     )
@@ -97,48 +97,85 @@ public extension View {
     /// - Parameters:
     ///   - policy: The protection policy.
     ///   - condition: Optional condition for conditional protection.
-    /// - Returns: A view with screen capture protection applied.
+    /// - Returns: A view with recording protection applied.
     @MainActor
-    func secureContent(
+    func recordingProtected(
         policy: CapturePolicy,
         condition: (any CaptureCondition)? = nil
     ) -> some View {
-        modifier(SecureViewModifier(
+        modifier(RecordingOverlayModifier(
             policy: policy,
             condition: condition
         ))
     }
     
-    /// Protects this view's content using the default policy.
+    /// Protects this view using the default policy during screen recording.
     ///
-    /// - Returns: A view with screen capture protection applied.
+    /// - Returns: A view with recording protection applied.
     @MainActor
-    func secureContent() -> some View {
-        modifier(SecureViewModifier(
+    func recordingProtected() -> some View {
+        modifier(RecordingOverlayModifier(
             policy: SecureScreenConfiguration.shared.defaultPolicy,
             condition: nil
         ))
     }
     
-    /// Protects this view's content with full context configuration.
+    /// Protects this view with full context configuration during recording.
     ///
     /// - Parameters:
     ///   - policy: The protection policy.
     ///   - condition: Optional condition for conditional protection.
     ///   - screenIdentifier: Identifier for this screen in policy context.
     ///   - userRole: User role for role-based policies.
-    /// - Returns: A view with screen capture protection applied.
+    /// - Returns: A view with recording protection applied.
+    func recordingProtected(
+        policy: CapturePolicy,
+        condition: (any CaptureCondition)?,
+        screenIdentifier: String?,
+        userRole: String?
+    ) -> some View {
+        modifier(RecordingOverlayModifier(
+            policy: policy,
+            condition: condition,
+            screenIdentifier: screenIdentifier,
+            userRole: userRole
+        ))
+    }
+}
+
+// MARK: - Deprecated Aliases for Backward Compatibility
+
+@available(*, deprecated, renamed: "RecordingOverlayModifier")
+public typealias SecureViewModifier = RecordingOverlayModifier
+
+public extension View {
+    @available(*, deprecated, renamed: "recordingProtected(policy:condition:)")
+    @MainActor
+    func secureContent(
+        policy: CapturePolicy,
+        condition: (any CaptureCondition)? = nil
+    ) -> some View {
+        recordingProtected(policy: policy, condition: condition)
+    }
+    
+    @available(*, deprecated, renamed: "recordingProtected()")
+    @MainActor
+    func secureContent() -> some View {
+        recordingProtected()
+    }
+    
+    @available(*, deprecated, renamed: "recordingProtected(policy:condition:screenIdentifier:userRole:)")
     func secureContent(
         policy: CapturePolicy,
         condition: (any CaptureCondition)?,
         screenIdentifier: String?,
         userRole: String?
     ) -> some View {
-        modifier(SecureViewModifier(
+        recordingProtected(
             policy: policy,
             condition: condition,
             screenIdentifier: screenIdentifier,
             userRole: userRole
-        ))
+        )
     }
 }

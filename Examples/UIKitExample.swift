@@ -73,9 +73,6 @@ class ExampleViolationHandler: ViolationHandler {
     @MainActor
     func screenshotTaken() {
         print("📸 [Security] Screenshot captured")
-        
-        // Example: Log to analytics
-        // Analytics.log("screenshot_taken", screen: currentScreen)
     }
     
     @MainActor
@@ -93,8 +90,9 @@ class ExampleViolationHandler: ViolationHandler {
 class ExampleMenuViewController: UITableViewController {
     
     private let examples = [
-        "Basic SecureViewController",
-        "View Extension Protection",
+        "Complete Protection (Screenshot + Recording)",
+        "Screenshot Protection Only",
+        "Recording Protection Only",
         "Policy Comparison",
         "Banking Screen Example"
     ]
@@ -112,6 +110,7 @@ class ExampleMenuViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = examples[indexPath.row]
+        cell.textLabel?.numberOfLines = 0
         cell.accessoryType = .disclosureIndicator
         return cell
     }
@@ -123,12 +122,14 @@ class ExampleMenuViewController: UITableViewController {
         
         switch indexPath.row {
         case 0:
-            viewController = BasicSecureExampleVC()
+            viewController = CompleteProtectionExampleVC()
         case 1:
-            viewController = ViewExtensionExampleVC()
+            viewController = ScreenshotProtectionExampleVC()
         case 2:
-            viewController = PolicyComparisonVC()
+            viewController = RecordingProtectionExampleVC()
         case 3:
+            viewController = PolicyComparisonVC()
+        case 4:
             viewController = BankingExampleVC()
         default:
             return
@@ -138,21 +139,184 @@ class ExampleMenuViewController: UITableViewController {
     }
 }
 
-// MARK: - Example 2: Basic SecureViewController Subclass
+// MARK: - Example 2: Complete Protection (Screenshot + Recording)
 
-/// Example of subclassing SecureViewController for automatic protection
-class BasicSecureExampleVC: SecureViewController {
+/// Example using ScreenProtectedUIView for complete protection
+class CompleteProtectionExampleVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "SecureViewController"
+        title = "Complete Protection"
+        view.backgroundColor = .systemBackground
+        
+        setupUI()
+    }
+    
+    private func setupUI() {
+        // Create the sensitive content
+        let sensitiveView = createSensitiveContentView()
+        
+        // Wrap in ScreenProtectedUIView for BOTH screenshot AND recording protection
+        let protectedView = ScreenProtectedUIView(policy: .obscure(style: .blur(radius: 25)))
+        protectedView.translatesAutoresizingMaskIntoConstraints = false
+        protectedView.addSecureContent(sensitiveView)
+        
+        view.addSubview(protectedView)
+        
+        NSLayoutConstraint.activate([
+            protectedView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            protectedView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            protectedView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            protectedView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            protectedView.heightAnchor.constraint(equalToConstant: 150)
+        ])
+        
+        // Add info label
+        let infoLabel = UILabel()
+        infoLabel.text = "This content is hidden from BOTH screenshots AND recordings"
+        infoLabel.font = .systemFont(ofSize: 12)
+        infoLabel.textColor = .secondaryLabel
+        infoLabel.textAlignment = .center
+        infoLabel.numberOfLines = 0
+        infoLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(infoLabel)
+        
+        NSLayoutConstraint.activate([
+            infoLabel.topAnchor.constraint(equalTo: protectedView.bottomAnchor, constant: 16),
+            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
+    private func createSensitiveContentView() -> UIView {
+        let container = UIView()
+        container.backgroundColor = .systemPurple.withAlphaComponent(0.1)
+        container.layer.cornerRadius = 12
+        
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        let iconView = UIImageView(image: UIImage(systemName: "lock.shield.fill"))
+        iconView.tintColor = .systemPurple
+        iconView.contentMode = .scaleAspectFit
+        iconView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        let titleLabel = UILabel()
+        titleLabel.text = "Fully Protected Content"
+        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        
+        let descLabel = UILabel()
+        descLabel.text = "Hidden from screenshots AND recordings"
+        descLabel.textColor = .secondaryLabel
+        descLabel.font = .systemFont(ofSize: 14)
+        
+        stack.addArrangedSubview(iconView)
+        stack.addArrangedSubview(titleLabel)
+        stack.addArrangedSubview(descLabel)
+        
+        container.addSubview(stack)
+        
+        NSLayoutConstraint.activate([
+            stack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            stack.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+        
+        return container
+    }
+}
+
+// MARK: - Example 3: Screenshot Protection Only
+
+/// Example using ScreenshotProofUIView for screenshot protection only
+class ScreenshotProtectionExampleVC: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        title = "Screenshot Protection"
+        view.backgroundColor = .systemBackground
+        
+        setupUI()
+    }
+    
+    private func setupUI() {
+        // Create the sensitive content
+        let sensitiveView = createSensitiveContentView()
+        
+        // Wrap in ScreenshotProofUIView - invisible in screenshots
+        let screenshotProofView = ScreenshotProofUIView()
+        screenshotProofView.translatesAutoresizingMaskIntoConstraints = false
+        screenshotProofView.addSecureSubview(sensitiveView)
+        
+        view.addSubview(screenshotProofView)
+        
+        NSLayoutConstraint.activate([
+            screenshotProofView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            screenshotProofView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            screenshotProofView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            screenshotProofView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            screenshotProofView.heightAnchor.constraint(equalToConstant: 150)
+        ])
+        
+        // Add info label
+        let infoLabel = UILabel()
+        infoLabel.text = "Take a screenshot - this content will be INVISIBLE!"
+        infoLabel.font = .systemFont(ofSize: 12)
+        infoLabel.textColor = .secondaryLabel
+        infoLabel.textAlignment = .center
+        infoLabel.numberOfLines = 0
+        infoLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(infoLabel)
+        
+        NSLayoutConstraint.activate([
+            infoLabel.topAnchor.constraint(equalTo: screenshotProofView.bottomAnchor, constant: 16),
+            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
+    private func createSensitiveContentView() -> UIView {
+        let container = UIView()
+        container.backgroundColor = .systemBlue.withAlphaComponent(0.1)
+        container.layer.cornerRadius = 12
+        
+        let label = UILabel()
+        label.text = "📸 Screenshot-Proof Content"
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        container.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+        
+        return container
+    }
+}
+
+// MARK: - Example 4: Recording Protection Only
+
+/// Example using RecordingProtectedViewController
+class RecordingProtectionExampleVC: RecordingProtectedViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        title = "Recording Protection"
         view.backgroundColor = .systemBackground
         
         // Configure protection policy
         policy = .obscure(style: .blur(radius: 25))
         
-        // Add content
         setupUI()
     }
     
@@ -163,17 +327,17 @@ class BasicSecureExampleVC: SecureViewController {
         stack.alignment = .center
         stack.translatesAutoresizingMaskIntoConstraints = false
         
-        let iconView = UIImageView(image: UIImage(systemName: "lock.shield.fill"))
-        iconView.tintColor = .systemBlue
+        let iconView = UIImageView(image: UIImage(systemName: "video.fill"))
+        iconView.tintColor = .systemGreen
         iconView.contentMode = .scaleAspectFit
         iconView.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
         let titleLabel = UILabel()
-        titleLabel.text = "Protected Content"
+        titleLabel.text = "Recording-Protected Content"
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         
         let descLabel = UILabel()
-        descLabel.text = "This view controller is protected.\nStart screen recording to see the blur effect."
+        descLabel.text = "An overlay appears during screen recording.\nStart recording to see the blur effect."
         descLabel.textAlignment = .center
         descLabel.numberOfLines = 0
         descLabel.textColor = .secondaryLabel
@@ -193,62 +357,7 @@ class BasicSecureExampleVC: SecureViewController {
     }
 }
 
-// MARK: - Example 3: Using View/ViewController Extension
-
-/// Example of using the secure() extension on a regular UIViewController
-class ViewExtensionExampleVC: UIViewController {
-    
-    private let sensitiveView = UIView()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        title = "Extension Example"
-        view.backgroundColor = .systemBackground
-        
-        setupUI()
-        
-        // Apply protection using the extension
-        // Option 1: Protect the entire view controller
-        secure(policy: .obscure(style: .blackout))
-        
-        // Option 2: Protect a specific view
-        // sensitiveView.enableCaptureProtection(policy: .block(reason: "Protected"))
-    }
-    
-    private func setupUI() {
-        sensitiveView.backgroundColor = .systemPurple.withAlphaComponent(0.1)
-        sensitiveView.layer.cornerRadius = 12
-        sensitiveView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let label = UILabel()
-        label.text = "Sensitive Data: ****-****-****-1234"
-        label.font = .monospacedSystemFont(ofSize: 16, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        sensitiveView.addSubview(label)
-        view.addSubview(sensitiveView)
-        
-        NSLayoutConstraint.activate([
-            sensitiveView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            sensitiveView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            sensitiveView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            sensitiveView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            sensitiveView.heightAnchor.constraint(equalToConstant: 100),
-            
-            label.centerXAnchor.constraint(equalTo: sensitiveView.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: sensitiveView.centerYAnchor)
-        ])
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        // Clean up protection when leaving
-        removeSecure()
-    }
-}
-
-// MARK: - Example 4: Policy Comparison
+// MARK: - Example 5: Policy Comparison
 
 /// Shows different policies side by side
 class PolicyComparisonVC: UIViewController {
@@ -274,28 +383,28 @@ class PolicyComparisonVC: UIViewController {
         // Add policy examples
         stack.addArrangedSubview(createPolicyCard(
             title: "Blur",
-            description: "Content is blurred",
+            description: "Content is blurred during recording",
             policy: .obscure(style: .blur(radius: 20)),
             color: .systemBlue
         ))
         
         stack.addArrangedSubview(createPolicyCard(
             title: "Blackout",
-            description: "Content is completely hidden",
+            description: "Content is completely hidden during recording",
             policy: .obscure(style: .blackout),
             color: .systemGray
         ))
         
         stack.addArrangedSubview(createPolicyCard(
             title: "Block",
-            description: "Shows blocking message",
+            description: "Shows blocking message during recording",
             policy: .block(reason: "Recording not allowed"),
             color: .systemRed
         ))
         
         stack.addArrangedSubview(createPolicyCard(
             title: "Allow",
-            description: "No protection",
+            description: "No protection applied",
             policy: .allow,
             color: .systemGreen
         ))
@@ -350,17 +459,19 @@ class PolicyComparisonVC: UIViewController {
             stack.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16)
         ])
         
-        // Apply protection to this card
-        card.enableCaptureProtection(policy: policy)
+        // Apply recording protection to this card
+        card.enableRecordingProtection(policy: policy)
         
         return card
     }
 }
 
-// MARK: - Example 5: Banking Screen
+// MARK: - Example 6: Banking Screen
 
-/// Realistic banking screen example
-class BankingExampleVC: SecureViewController {
+/// Realistic banking screen example with complete protection
+class BankingExampleVC: UIViewController {
+    
+    private var protectedView: ScreenProtectedUIView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -368,25 +479,29 @@ class BankingExampleVC: SecureViewController {
         title = "My Accounts"
         view.backgroundColor = .systemGroupedBackground
         
-        // Block with reason for banking data
-        policy = .block(reason: "Banking information is protected from screen capture")
-        
         setupUI()
     }
     
     private func setupUI() {
+        // Create table view content
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        view.addSubview(tableView)
+        // Wrap in ScreenProtectedUIView for complete protection
+        let protected = ScreenProtectedUIView(policy: .block(reason: "Banking information is protected"))
+        protected.translatesAutoresizingMaskIntoConstraints = false
+        protected.addSecureContent(tableView)
+        
+        view.addSubview(protected)
+        self.protectedView = protected
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            protected.topAnchor.constraint(equalTo: view.topAnchor),
+            protected.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            protected.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            protected.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
@@ -427,6 +542,6 @@ extension BankingExampleVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        "Start screen recording to see protection in action"
+        "Protected from BOTH screenshots AND screen recordings"
     }
 }

@@ -32,6 +32,14 @@
 /// > Important: iOS does not allow apps to prevent screenshots or screen recordings.
 /// > SecureScreenKit can only **detect** these events and **respond** by obscuring content.
 ///
+/// ## Protection Types
+///
+/// | Type | SwiftUI | UIKit | Modifier |
+/// |------|---------|-------|----------|
+/// | **Screenshot Only** | `ScreenshotProofView` | `ScreenshotProofUIView` | `.screenshotProtected()` |
+/// | **Recording Only** | `RecordingOverlayContainer` | `RecordingOverlayView` | `.recordingProtected()` |
+/// | **Complete (Both)** | `ScreenProtectedView` | `ScreenProtectedUIView` | `.screenProtected()` |
+///
 /// ## Quick Start
 ///
 /// ### Configuration
@@ -46,28 +54,33 @@
 ///
 /// ### SwiftUI Usage
 /// ```swift
-/// // Using SecureContainer
-/// SecureContainer(policy: .block(reason: "Protected")) {
+/// // Complete protection (screenshot + recording)
+/// ScreenProtectedView {
 ///     SensitiveDataView()
 /// }
 ///
 /// // Using view modifier
 /// SensitiveView()
-///     .secureContent(policy: .obscure(style: .blackout))
+///     .screenProtected()
+///
+/// // Recording overlay only
+/// RecordingOverlayContainer(policy: .block(reason: "Protected")) {
+///     SensitiveView()
+/// }
 /// ```
 ///
 /// ### UIKit Usage
 /// ```swift
-/// // Using SecureViewController
-/// class MyViewController: SecureViewController {
+/// // Subclass for recording protection
+/// class MyViewController: RecordingProtectedViewController {
 ///     override func viewDidLoad() {
 ///         super.viewDidLoad()
 ///         policy = .obscure(style: .blur(radius: 25))
 ///     }
 /// }
 ///
-/// // Using extension
-/// myViewController.secure(policy: .block(reason: "Protected"))
+/// // Or use extensions
+/// myViewController.protectFromRecording(policy: .block(reason: "Protected"))
 /// ```
 ///
 /// ## Violation Handling
@@ -91,10 +104,19 @@
 // Re-export public types for cleaner imports
 // Users can simply `import SecureScreenKit` to access all public API
 
-// The following types are public:
+// Configuration & Violation Handling:
 // - SecureScreenConfiguration
-// - CapturePolicy
-// - ObscureStyle
+// - ViolationHandler (protocol)
+// - DefaultViolationHandler
+// - BlockViolationHandler
+
+// Core Types:
+// - CapturePolicy (.allow, .obscure, .block, .logout)
+// - ObscureStyle (.blur, .blackout, .custom)
+// - CaptureState (.idle, .recording, .screenshotTaken)
+// - CaptureContext
+
+// Conditions:
 // - CaptureCondition (protocol)
 // - AlwaysProtectCondition
 // - NeverProtectCondition
@@ -105,16 +127,25 @@
 // - CompositeAndCondition
 // - CompositeOrCondition
 // - AnyCaptureCondition
-// - CaptureContext
-// - CaptureState
-// - SecureContainer
-// - SecureContentView (screenshot-proof content using secure text field trick)
-// - SecureViewModifier (via .secureContent modifier)
-// - View.screenshotProof() (makes content hidden from screenshots)
-// - SecureHostingController
-// - SecureViewController
-// - SecureUIView (UIKit screenshot-proof container)
-// - ViolationHandler (protocol)
-// - DefaultViolationHandler
-// - BlockViolationHandler
 
+// SwiftUI Components:
+// - ScreenshotProofView (hides from screenshots)
+// - RecordingOverlayContainer (overlay during recording)
+// - ScreenProtectedView (complete protection - both)
+// - RecordingProtectedHostingController
+
+// SwiftUI View Modifiers:
+// - .screenshotProtected()
+// - .recordingProtected()
+// - .screenProtected()
+
+// UIKit Components:
+// - ScreenshotProofUIView (hides from screenshots)
+// - RecordingOverlayView (overlay during recording)
+// - ScreenProtectedUIView (complete protection - both)
+// - RecordingProtectedViewController
+
+// UIKit Extensions:
+// - UIView.enableRecordingProtection(policy:)
+// - UIView.wrapInScreenshotProofContainer()
+// - UIViewController.protectFromRecording(policy:)

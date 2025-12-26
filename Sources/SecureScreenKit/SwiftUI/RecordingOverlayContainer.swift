@@ -1,37 +1,37 @@
 //
-//  SecureContainer.swift
+//  RecordingOverlayContainer.swift
 //  SecureScreenKit
 //
-//  Enterprise-grade screen capture protection for iOS
+//  Container that shows overlay during screen recording
 //
 
 import SwiftUI
 import Combine
 
-/// A SwiftUI container that protects its content from screen capture.
+/// A SwiftUI container that protects its content from screen recording with an overlay.
 ///
-/// `SecureContainer` wraps your sensitive content and applies protection
-/// based on the specified policy when screen capture is detected.
+/// `RecordingOverlayContainer` wraps your sensitive content and applies a visual overlay
+/// (blur, blackout, or blocking message) when screen recording is detected.
 ///
 /// ## Example Usage
 ///
 /// ### Basic Protection
 /// ```swift
-/// SecureContainer {
+/// RecordingOverlayContainer {
 ///     SensitiveDataView()
 /// }
 /// ```
 ///
 /// ### Custom Policy
 /// ```swift
-/// SecureContainer(policy: .obscure(style: .blur(radius: 25))) {
+/// RecordingOverlayContainer(policy: .obscure(style: .blur(radius: 25))) {
 ///     BankAccountView()
 /// }
 /// ```
 ///
 /// ### Conditional Protection
 /// ```swift
-/// SecureContainer(
+/// RecordingOverlayContainer(
 ///     policy: .block(reason: "Recording not allowed"),
 ///     condition: RecordingOnlyCondition()
 /// ) {
@@ -39,9 +39,10 @@ import Combine
 /// }
 /// ```
 ///
-/// - Important: This container **detects** screen capture and **obscures** content.
-///   It cannot **prevent** screenshots or recordings on iOS.
-public struct SecureContainer<Content: View>: View {
+/// - Note: This provides **overlay-based** protection during recording only.
+///   For screenshot protection, use `ScreenshotProofView`.
+///   For complete protection (both), use `ScreenProtectedView`.
+public struct RecordingOverlayContainer<Content: View>: View {
     
     // MARK: - Properties
     
@@ -61,11 +62,11 @@ public struct SecureContainer<Content: View>: View {
     private let content: Content
     
     /// View model for observing capture state.
-    @ObservedObject private var viewModel: SecureContainerViewModel
+    @ObservedObject private var viewModel: RecordingOverlayViewModel
     
     // MARK: - Initialization
     
-    /// Creates a secure container with default policy from configuration.
+    /// Creates a recording overlay container with default policy from configuration.
     ///
     /// - Parameter content: The content to protect.
     @MainActor
@@ -77,10 +78,10 @@ public struct SecureContainer<Content: View>: View {
         self.screenIdentifier = nil
         self.userRole = nil
         self.content = content()
-        self.viewModel = SecureContainerViewModel()
+        self.viewModel = RecordingOverlayViewModel()
     }
     
-    /// Creates a secure container with a specified policy.
+    /// Creates a recording overlay container with a specified policy.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
@@ -95,10 +96,10 @@ public struct SecureContainer<Content: View>: View {
         self.screenIdentifier = nil
         self.userRole = nil
         self.content = content()
-        self.viewModel = SecureContainerViewModel()
+        self.viewModel = RecordingOverlayViewModel()
     }
     
-    /// Creates a secure container with policy and condition.
+    /// Creates a recording overlay container with policy and condition.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
@@ -115,10 +116,10 @@ public struct SecureContainer<Content: View>: View {
         self.screenIdentifier = nil
         self.userRole = nil
         self.content = content()
-        self.viewModel = SecureContainerViewModel()
+        self.viewModel = RecordingOverlayViewModel()
     }
     
-    /// Creates a secure container with full configuration.
+    /// Creates a recording overlay container with full configuration.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to apply.
@@ -139,7 +140,7 @@ public struct SecureContainer<Content: View>: View {
         self.screenIdentifier = screenIdentifier
         self.userRole = userRole
         self.content = content()
-        self.viewModel = SecureContainerViewModel()
+        self.viewModel = RecordingOverlayViewModel()
     }
     
     // MARK: - Body
@@ -200,10 +201,10 @@ public struct SecureContainer<Content: View>: View {
     }
 }
 
-// MARK: - SecureContainerViewModel
+// MARK: - RecordingOverlayViewModel
 
 @MainActor
-internal final class SecureContainerViewModel: ObservableObject {
+internal final class RecordingOverlayViewModel: ObservableObject {
     
     @Published private(set) var captureState: CaptureState = .idle
     
@@ -322,3 +323,8 @@ internal struct CustomOverlayView: UIViewRepresentable {
         // No updates needed
     }
 }
+
+// MARK: - Deprecated Alias for Backward Compatibility
+
+@available(*, deprecated, renamed: "RecordingOverlayContainer")
+public typealias SecureContainer = RecordingOverlayContainer

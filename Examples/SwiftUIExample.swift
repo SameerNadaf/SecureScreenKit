@@ -59,8 +59,14 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                NavigationLink("Basic Protection") {
-                    BasicProtectionExample()
+                NavigationLink("Complete Protection (Screenshot + Recording)") {
+                    CompleteProtectionExample()
+                }
+                NavigationLink("Screenshot Protection Only") {
+                    ScreenshotProtectionExample()
+                }
+                NavigationLink("Recording Protection Only") {
+                    RecordingProtectionExample()
                 }
                 NavigationLink("Policy Examples") {
                     PolicyExamplesView()
@@ -77,20 +83,57 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Example 1: Basic Protection
+// MARK: - Example 1: Complete Protection (Both Screenshot & Recording)
 
-struct BasicProtectionExample: View {
+struct CompleteProtectionExample: View {
     var body: some View {
         VStack(spacing: 20) {
-            Text("Basic Protection Example")
+            Text("Complete Protection Example")
                 .font(.headline)
             
-            // Option 1: SecureContainer
-            SecureContainer {
+            // ScreenProtectedView - hides from BOTH screenshots AND recordings
+            ScreenProtectedView {
                 VStack {
-                    Text("🔒 Protected Content")
+                    Text("🔐 Fully Protected Content")
                         .font(.title)
-                    Text("This content is protected using SecureContainer")
+                    Text("Hidden from screenshots AND screen recordings")
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .background(Color.purple.opacity(0.1))
+                .cornerRadius(12)
+            }
+            
+            // Using view modifier
+            Text("Also Fully Protected via Modifier")
+                .padding()
+                .background(Color.indigo.opacity(0.1))
+                .cornerRadius(8)
+                .screenProtected() // Complete protection
+            
+            Text("Try taking a screenshot or screen recording!")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .navigationTitle("Complete")
+    }
+}
+
+// MARK: - Example 2: Screenshot Protection Only
+
+struct ScreenshotProtectionExample: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Screenshot Protection Only")
+                .font(.headline)
+            
+            // ScreenshotProofView - invisible in screenshots
+            ScreenshotProofView {
+                VStack {
+                    Text("📸 Screenshot-Proof Content")
+                        .font(.title)
+                    Text("This will be INVISIBLE in screenshots")
                         .foregroundColor(.secondary)
                 }
                 .padding()
@@ -98,19 +141,60 @@ struct BasicProtectionExample: View {
                 .cornerRadius(12)
             }
             
-            // Option 2: View Modifier
-            Text("Also Protected via Modifier")
+            // Using view modifier
+            Text("Also Screenshot-Proof via Modifier")
                 .padding()
-                .background(Color.green.opacity(0.1))
+                .background(Color.cyan.opacity(0.1))
                 .cornerRadius(8)
-                .secureContent() // Uses default policy
+                .screenshotProtected()
+            
+            Text("Take a screenshot - this content won't appear!")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
         .padding()
-        .navigationTitle("Basic")
+        .navigationTitle("Screenshot")
     }
 }
 
-// MARK: - Example 2: Different Policies
+// MARK: - Example 3: Recording Protection Only (Overlay)
+
+struct RecordingProtectionExample: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Recording Protection Only")
+                .font(.headline)
+            
+            // RecordingOverlayContainer - shows overlay during recording
+            RecordingOverlayContainer {
+                VStack {
+                    Text("📹 Recording-Protected Content")
+                        .font(.title)
+                    Text("Overlay appears during screen recording")
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .background(Color.green.opacity(0.1))
+                .cornerRadius(12)
+            }
+            
+            // Using view modifier
+            Text("Also Recording-Protected via Modifier")
+                .padding()
+                .background(Color.mint.opacity(0.1))
+                .cornerRadius(8)
+                .recordingProtected()
+            
+            Text("Start screen recording to see the overlay!")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .navigationTitle("Recording")
+    }
+}
+
+// MARK: - Example 4: Different Policies
 
 struct PolicyExamplesView: View {
     var body: some View {
@@ -120,7 +204,7 @@ struct PolicyExamplesView: View {
                 // Blur Policy
                 Text("Blur Protection")
                     .font(.headline)
-                SecureContainer(policy: .obscure(style: .blur(radius: 15))) {
+                RecordingOverlayContainer(policy: .obscure(style: .blur(radius: 15))) {
                     SensitiveCard(
                         title: "Account Balance",
                         value: "$12,345.67",
@@ -131,7 +215,7 @@ struct PolicyExamplesView: View {
                 // Blackout Policy
                 Text("Blackout Protection")
                     .font(.headline)
-                SecureContainer(policy: .obscure(style: .blackout)) {
+                RecordingOverlayContainer(policy: .obscure(style: .blackout)) {
                     SensitiveCard(
                         title: "Social Security",
                         value: "XXX-XX-1234",
@@ -142,7 +226,7 @@ struct PolicyExamplesView: View {
                 // Block Policy
                 Text("Block with Message")
                     .font(.headline)
-                SecureContainer(policy: .block(reason: "This content cannot be screen recorded")) {
+                RecordingOverlayContainer(policy: .block(reason: "This content cannot be screen recorded")) {
                     SensitiveCard(
                         title: "Medical Records",
                         value: "Confidential",
@@ -153,7 +237,7 @@ struct PolicyExamplesView: View {
                 // Allow Policy (for comparison)
                 Text("Allowed Content")
                     .font(.headline)
-                SecureContainer(policy: .allow) {
+                RecordingOverlayContainer(policy: .allow) {
                     SensitiveCard(
                         title: "Public Info",
                         value: "Visible in recordings",
@@ -187,7 +271,7 @@ struct SensitiveCard: View {
     }
 }
 
-// MARK: - Example 3: Conditional Protection
+// MARK: - Example 5: Conditional Protection
 
 struct ConditionalProtectionExample: View {
     @State private var isAdmin = false
@@ -198,7 +282,7 @@ struct ConditionalProtectionExample: View {
                 .padding()
             
             // Role-based protection - admins are exempt
-            SecureContainer(
+            RecordingOverlayContainer(
                 policy: .obscure(style: .blur(radius: 20)),
                 condition: RoleBasedCondition(exemptRoles: ["admin"]),
                 screenIdentifier: "conditional_demo",
@@ -228,7 +312,7 @@ struct ConditionalProtectionExample: View {
     }
 }
 
-// MARK: - Example 4: Banking App Simulation
+// MARK: - Example 6: Banking App Simulation
 
 struct BankingScreenExample: View {
     let accounts = [
@@ -247,10 +331,8 @@ struct BankingScreenExample: View {
             }
             .padding()
             
-            // Account List (protected)
-            SecureContainer(
-                policy: .block(reason: "Banking information is protected from screen capture")
-            ) {
+            // Account List (fully protected - screenshot + recording)
+            ScreenProtectedView(recordingPolicy: .block(reason: "Banking information is protected")) {
                 VStack(spacing: 12) {
                     ForEach(accounts, id: \.0) { account in
                         HStack {
@@ -278,7 +360,7 @@ struct BankingScreenExample: View {
             Spacer()
             
             // Footer info
-            Text("Start screen recording to see protection in action")
+            Text("Banking data is protected from screenshots AND recordings")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding()

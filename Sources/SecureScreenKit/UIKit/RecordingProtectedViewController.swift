@@ -1,54 +1,60 @@
 //
-//  SecureHostingController.swift
+//  RecordingProtectedViewController.swift
 //  SecureScreenKit
 //
-//  Enterprise-grade screen capture protection for iOS
+//  UIViewController with recording protection overlay
 //
 
-import SwiftUI
+import UIKit
 import Combine
 
-/// A UIHostingController subclass with integrated screen capture protection.
+/// A UIViewController subclass with integrated recording protection.
 ///
-/// Use `SecureHostingController` when embedding SwiftUI views in UIKit
-/// and you need capture protection at the controller level.
+/// `RecordingProtectedViewController` provides built-in protection for its content,
+/// automatically showing an overlay when screen recording is detected.
 ///
-/// ## Example Usage
+/// ## Usage
+///
+/// ### Subclassing
 /// ```swift
-/// let secureController = SecureHostingController(
-///     rootView: SensitiveSwiftUIView(),
-///     policy: .obscure(style: .blur(radius: 20))
-/// )
-/// navigationController.pushViewController(secureController, animated: true)
+/// class BankingViewController: RecordingProtectedViewController {
+///     override func viewDidLoad() {
+///         super.viewDidLoad()
+///         policy = .block(reason: "Banking data protected")
+///         // Add your UI setup
+///     }
+/// }
 /// ```
 ///
-/// ## Architecture
-/// This controller adds an overlay layer that responds to capture events,
-/// working in conjunction with the global shield system.
+/// ### Direct Use with Extension
+/// ```swift
+/// let viewController = UIViewController()
+/// viewController.protectFromRecording(policy: .obscure(style: .blur(radius: 20)))
+/// ```
 @MainActor
-public final class SecureHostingController<Content: View>: UIHostingController<Content> {
+open class RecordingProtectedViewController: UIViewController {
     
     // MARK: - Properties
     
     /// The protection policy for this controller.
-    public var policy: CapturePolicy {
+    open var policy: CapturePolicy = SecureScreenConfiguration.shared.defaultPolicy {
         didSet {
             updateProtection()
         }
     }
     
     /// Optional condition for conditional protection.
-    public var condition: (any CaptureCondition)? {
+    open var condition: (any CaptureCondition)? {
         didSet {
             updateProtection()
         }
     }
     
     /// Screen identifier for context.
-    public var screenIdentifier: String?
+    open var screenIdentifier: String?
     
     /// User role for context.
-    public var userRole: String?
+    open var userRole: String?
     
     // MARK: - Private Properties
     
@@ -57,42 +63,19 @@ public final class SecureHostingController<Content: View>: UIHostingController<C
     private let monitor = CaptureMonitor.shared
     private let policyEngine = CapturePolicyEngine.shared
     
-    // MARK: - Initialization
-    
-    /// Creates a secure hosting controller with specified policy.
-    ///
-    /// - Parameters:
-    ///   - rootView: The SwiftUI view to host.
-    ///   - policy: The protection policy.
-    ///   - condition: Optional condition for conditional protection.
-    public init(
-        rootView: Content,
-        policy: CapturePolicy,
-        condition: (any CaptureCondition)? = nil
-    ) {
-        self.policy = policy
-        self.condition = condition
-        super.init(rootView: rootView)
-    }
-    
-    @available(*, unavailable)
-    required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     // MARK: - Lifecycle
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         setupCaptureMonitoring()
     }
     
-    public override func viewWillAppear(_ animated: Bool) {
+    open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateProtection()
     }
     
-    public override func viewDidDisappear(_ animated: Bool) {
+    open override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeOverlay()
     }
@@ -155,24 +138,15 @@ public final class SecureHostingController<Content: View>: UIHostingController<C
             overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
-        // Animate in
-        overlay.alpha = 0
-        UIView.animate(withDuration: 0.2) {
-            overlay.alpha = 1
-        }
-        
+        // Show immediately (no animation for security)
         self.overlayView = overlay
     }
     
     private func removeOverlay() {
         guard let overlay = overlayView else { return }
         
-        UIView.animate(withDuration: 0.2) {
-            overlay.alpha = 0
-        } completion: { _ in
-            overlay.removeFromSuperview()
-        }
-        
+        // Remove immediately (no animation for security)
+        overlay.removeFromSuperview()
         overlayView = nil
     }
     
@@ -237,4 +211,24 @@ public final class SecureHostingController<Content: View>: UIHostingController<C
         
         return container
     }
+    
+    // MARK: - Public Methods
+    
+    /// Configures protection with the specified policy and condition.
+    ///
+    /// - Parameters:
+    ///   - policy: The protection policy to apply.
+    ///   - condition: Optional condition for conditional protection.
+    public func configureProtection(
+        policy: CapturePolicy,
+        condition: (any CaptureCondition)? = nil
+    ) {
+        self.policy = policy
+        self.condition = condition
+    }
 }
+
+// MARK: - Deprecated Alias for Backward Compatibility
+
+@available(*, deprecated, renamed: "RecordingProtectedViewController")
+public typealias SecureViewController = RecordingProtectedViewController

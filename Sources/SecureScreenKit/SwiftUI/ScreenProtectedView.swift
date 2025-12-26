@@ -1,5 +1,5 @@
 //
-//  SecureView.swift
+//  ScreenProtectedView.swift
 //  SecureScreenKit
 //
 //  Complete protection: hides content from BOTH screenshots AND recordings
@@ -10,51 +10,51 @@ import Combine
 
 /// A SwiftUI view that provides COMPLETE protection for its content.
 ///
-/// `SecureView` combines two protection techniques:
+/// `ScreenProtectedView` combines two protection techniques:
 /// 1. **Screenshot Protection**: Uses `isSecureTextEntry` trick to make content invisible in screenshots
 /// 2. **Recording Protection**: Shows overlay during screen recording
 ///
 /// ## Example Usage
 /// ```swift
-/// SecureView {
+/// ScreenProtectedView {
 ///     SensitiveDataView()
 /// }
 /// ```
 ///
 /// - Important: Content inside this view will be hidden from BOTH screenshots AND screen recordings.
 @available(iOS 14.0, *)
-public struct SecureView<Content: View>: View {
+public struct ScreenProtectedView<Content: View>: View {
     
     private let content: Content
     private let policy: CapturePolicy
     
-    @ObservedObject private var viewModel: SecureViewViewModel
+    @ObservedObject private var viewModel: ScreenProtectedViewModel
     
-    /// Creates a secure view with default blur overlay for recording protection.
+    /// Creates a screen-protected view with default blur overlay for recording protection.
     ///
     /// - Parameter content: The content to protect.
     @MainActor
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
         self.policy = .obscure(style: .blur(radius: 25))
-        self.viewModel = SecureViewViewModel()
+        self.viewModel = ScreenProtectedViewModel()
     }
     
-    /// Creates a secure view with a custom policy for recording protection.
+    /// Creates a screen-protected view with a custom policy for recording protection.
     ///
     /// - Parameters:
-    ///   - policy: The policy to apply during screen recording.
+    ///   - recordingPolicy: The policy to apply during screen recording.
     ///   - content: The content to protect.
     @MainActor
-    public init(policy: CapturePolicy, @ViewBuilder content: () -> Content) {
+    public init(recordingPolicy: CapturePolicy, @ViewBuilder content: () -> Content) {
         self.content = content()
-        self.policy = policy
-        self.viewModel = SecureViewViewModel()
+        self.policy = recordingPolicy
+        self.viewModel = ScreenProtectedViewModel()
     }
     
     public var body: some View {
         // Layer 1: Screenshot protection (isSecureTextEntry trick)
-        SecureContentView {
+        ScreenshotProofView {
             // Layer 2: Recording protection (overlay)
             content
                 .overlay(
@@ -109,7 +109,7 @@ public struct SecureView<Content: View>: View {
 
 @available(iOS 14.0, *)
 @MainActor
-internal final class SecureViewViewModel: ObservableObject {
+internal final class ScreenProtectedViewModel: ObservableObject {
     
     @Published private(set) var isRecording: Bool = false
     
@@ -132,7 +132,7 @@ internal final class SecureViewViewModel: ObservableObject {
 @available(iOS 14.0, *)
 public extension View {
     
-    /// Makes this view completely secure from both screenshots and screen recordings.
+    /// Makes this view completely protected from both screenshots and screen recordings.
     ///
     /// This modifier combines:
     /// 1. Screenshot protection (content invisible in screenshots)
@@ -141,23 +141,42 @@ public extension View {
     /// ## Example
     /// ```swift
     /// Text("Secret PIN: 1234")
-    ///     .secure()
+    ///     .screenProtected()
     /// ```
     ///
     /// - Returns: A view that is hidden from both screenshots and recordings.
-    func secure() -> some View {
-        SecureView {
+    func screenProtected() -> some View {
+        ScreenProtectedView {
             self
         }
     }
     
-    /// Makes this view completely secure with a custom recording protection policy.
+    /// Makes this view completely protected with a custom recording protection policy.
     ///
     /// - Parameter recordingPolicy: The policy to apply during screen recording.
     /// - Returns: A view that is hidden from both screenshots and recordings.
-    func secure(recordingPolicy: CapturePolicy) -> some View {
-        SecureView(policy: recordingPolicy) {
+    func screenProtected(recordingPolicy: CapturePolicy) -> some View {
+        ScreenProtectedView(recordingPolicy: recordingPolicy) {
             self
         }
+    }
+}
+
+// MARK: - Deprecated Aliases for Backward Compatibility
+
+@available(iOS 14.0, *)
+@available(*, deprecated, renamed: "ScreenProtectedView")
+public typealias SecureView = ScreenProtectedView
+
+@available(iOS 14.0, *)
+public extension View {
+    @available(*, deprecated, renamed: "screenProtected")
+    func secure() -> some View {
+        screenProtected()
+    }
+    
+    @available(*, deprecated, renamed: "screenProtected(recordingPolicy:)")
+    func secure(recordingPolicy: CapturePolicy) -> some View {
+        screenProtected(recordingPolicy: recordingPolicy)
     }
 }

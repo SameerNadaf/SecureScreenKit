@@ -10,8 +10,12 @@
 /Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldCoordinator.swift
 /Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldViewController.swift
 /Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldWindow.swift
-/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureContainer.swift
-/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureHostingController.swift
-/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureViewModifier.swift
-/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/SecureViewController.swift
-/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/UIView+Secure.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/RecordingOverlayContainer.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/RecordingOverlayModifier.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/RecordingProtectedHostingController.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/ScreenProtectedView.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/ScreenshotProofView.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/RecordingOverlayView.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/RecordingProtectedViewController.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/ScreenProtectedUIView.swift
+/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/UIView+ScreenProtection.swift
