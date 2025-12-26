@@ -1,0 +1,471 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.SecureScreenKit-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/sources",
+      "importPath" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureContext.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureMonitor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CaptureCondition.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicy.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicyEngine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/SecureScreenConfiguration.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/ViolationHandler.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SecureScreenKit.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldWindow.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureContainer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureHostingController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureViewModifier.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/SecureViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/UIView+Secure.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "SecureScreenKit",
+      "moduleOutputPath" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/Modules/SecureScreenKit.swiftmodule",
+      "objects" : [
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureContext.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureMonitor.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureState.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureCondition.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CapturePolicy.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CapturePolicyEngine.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureScreenConfiguration.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ViolationHandler.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureScreenKit.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ShieldCoordinator.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ShieldViewController.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ShieldWindow.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureContainer.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureHostingController.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureViewModifier.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureViewController.swift.o",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/UIView+Secure.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/include/SecureScreenKit-Swift.h",
+        "-color-diagnostics",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g"
+      ],
+      "outputFileMapPath" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureContext.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureMonitor.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CaptureCondition.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CapturePolicy.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/CapturePolicyEngine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureScreenConfiguration.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ViolationHandler.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureScreenKit.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ShieldCoordinator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ShieldViewController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/ShieldWindow.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureContainer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureHostingController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureViewModifier.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/SecureViewController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/UIView+Secure.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/Modules/SecureScreenKit.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureContext.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureMonitor.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureState.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CaptureCondition.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicy.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicyEngine.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/SecureScreenConfiguration.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/ViolationHandler.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SecureScreenKit.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldCoordinator.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldViewController.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldWindow.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureContainer.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureHostingController.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureViewModifier.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/SecureViewController.swift",
+        "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/UIView+Secure.swift"
+      ],
+      "tempsPath" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "SecureScreenKit" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "SecureScreenKit",
+      "-c",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureContext.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureMonitor.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureState.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CaptureCondition.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicy.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicyEngine.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/SecureScreenConfiguration.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/ViolationHandler.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SecureScreenKit.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldCoordinator.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldViewController.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldWindow.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureContainer.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureHostingController.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureViewModifier.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/SecureViewController.swift",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/UIView+Secure.swift",
+      "-I",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/include/SecureScreenKit-Swift.h",
+      "-color-diagnostics",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "SecureScreenKit" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureContext.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureMonitor.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Core/CaptureState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CaptureCondition.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicy.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Policy/CapturePolicyEngine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/SecureScreenConfiguration.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Public/ViolationHandler.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SecureScreenKit.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/Shield/ShieldWindow.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureContainer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureHostingController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/SwiftUI/SecureViewModifier.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/SecureViewController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/Sources/SecureScreenKit/UIKit/UIView+Secure.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/SecureScreenKit.build/sources"
+    },
+    "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/cipluser01/Documents/Sameer/ScreenShot/SecureScreenKit/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}
