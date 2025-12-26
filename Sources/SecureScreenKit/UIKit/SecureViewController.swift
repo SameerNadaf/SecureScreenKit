@@ -138,24 +138,15 @@ open class SecureViewController: UIViewController {
             overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
-        // Animate in
-        overlay.alpha = 0
-        UIView.animate(withDuration: 0.2) {
-            overlay.alpha = 1
-        }
-        
+        // Show immediately (no animation for security)
         self.overlayView = overlay
     }
     
     private func removeOverlay() {
         guard let overlay = overlayView else { return }
         
-        UIView.animate(withDuration: 0.2) {
-            overlay.alpha = 0
-        } completion: { _ in
-            overlay.removeFromSuperview()
-        }
-        
+        // Remove immediately (no animation for security)
+        overlay.removeFromSuperview()
         overlayView = nil
     }
     
