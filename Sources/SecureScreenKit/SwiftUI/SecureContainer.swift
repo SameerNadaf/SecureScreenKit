@@ -145,24 +145,25 @@ public struct SecureContainer<Content: View>: View {
     // MARK: - Body
     
     public var body: some View {
-        ZStack {
-            content
-            
-            if viewModel.shouldShowProtection(
-                policy: policy,
-                condition: condition,
-                screenIdentifier: screenIdentifier,
-                userRole: userRole
-            ) {
-                protectionOverlay
+        content
+            .overlay(
+                Group {
+                    if viewModel.shouldShowProtection(
+                        policy: policy,
+                        condition: condition,
+                        screenIdentifier: screenIdentifier,
+                        userRole: userRole
+                    ) {
+                        protectionOverlay
+                    }
+                }
+            )
+            .onAppear {
+                viewModel.startMonitoring()
             }
-        }
-        .onAppear {
-            viewModel.startMonitoring()
-        }
-        .onDisappear {
-            viewModel.stopMonitoring()
-        }
+            .onDisappear {
+                viewModel.stopMonitoring()
+            }
     }
     
     // MARK: - Protection Overlay
@@ -192,7 +193,6 @@ public struct SecureContainer<Content: View>: View {
             
         case .blackout:
             Color.black
-                .ignoresSafeArea()
             
         case .custom(let viewProvider):
             CustomOverlayView(viewProvider: viewProvider)
@@ -246,7 +246,6 @@ internal struct BlurOverlayView: View {
     var body: some View {
         #if os(iOS)
         VisualEffectBlur(blurRadius: radius)
-            .ignoresSafeArea()
         #endif
     }
 }
@@ -274,25 +273,25 @@ internal struct BlockingOverlayView: View {
     var body: some View {
         ZStack {
             Color.black
-                .ignoresSafeArea()
             
-            VStack(spacing: 16) {
+            VStack(spacing: 12) {
                 Image(systemName: "lock.shield.fill")
-                    .font(.system(size: 48))
+                    .font(.system(size: 32))
                     .foregroundColor(.white)
                 
                 Text("Content Protected")
-                    .font(.title2.weight(.semibold))
+                    .font(.headline)
                     .foregroundColor(.white)
                 
                 if let reason = reason {
                     Text(reason)
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundColor(.white.opacity(0.8))
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, 16)
                 }
             }
+            .padding()
         }
     }
 }
