@@ -192,8 +192,9 @@ public extension SecureScreenConfiguration {
     /// Enables full-app protection that shows a blank (black) screen during capture.
     ///
     /// This is the simplest way to protect your entire app from screen recording
-    /// and screenshots. When enabled, the entire screen will be covered with a
-    /// black overlay during any capture event.
+    /// AND screenshots. When enabled:
+    /// - The entire screen will be covered with a black overlay during recording
+    /// - Content will be invisible in screenshots (using secure text field trick)
     ///
     /// ## Usage
     /// ```swift
@@ -207,13 +208,18 @@ public extension SecureScreenConfiguration {
         self.isProtectionEnabled = true
         self.defaultPolicy = .obscure(style: .blackout)
         self.violationHandler = violationHandler
+        
+        // Enable screenshot protection (makes content blank in screenshots)
+        ScreenshotProtector.shared.protect()
+        
+        // Start recording protection (shows overlay during recording)
         startProtection()
     }
     
     /// Enables full-app protection with a blur effect during capture.
     ///
     /// Similar to `enableFullAppProtection()` but uses a blur effect instead
-    /// of a solid black overlay.
+    /// of a solid black overlay for recordings. Screenshots will still show blank.
     ///
     /// - Parameters:
     ///   - blurRadius: The blur radius to apply (default: 30)
@@ -222,13 +228,18 @@ public extension SecureScreenConfiguration {
         self.isProtectionEnabled = true
         self.defaultPolicy = .obscure(style: .blur(radius: blurRadius))
         self.violationHandler = violationHandler
+        
+        // Enable screenshot protection
+        ScreenshotProtector.shared.protect()
+        
+        // Start recording protection
         startProtection()
     }
     
     /// Enables full-app protection with a blocking message during capture.
     ///
     /// Shows a "Content Protected" message with optional reason text
-    /// when screen capture is detected.
+    /// when screen capture is detected. Screenshots will show blank.
     ///
     /// - Parameters:
     ///   - reason: Optional reason to display to the user
@@ -237,6 +248,11 @@ public extension SecureScreenConfiguration {
         self.isProtectionEnabled = true
         self.defaultPolicy = .block(reason: reason)
         self.violationHandler = violationHandler
+        
+        // Enable screenshot protection
+        ScreenshotProtector.shared.protect()
+        
+        // Start recording protection
         startProtection()
     }
     
@@ -244,7 +260,24 @@ public extension SecureScreenConfiguration {
     ///
     /// Call this to turn off global protection and remove the shield overlay.
     func disableFullAppProtection() {
+        // Disable recording protection
         stopProtection()
         isProtectionEnabled = false
+        
+        // Disable screenshot protection
+        ScreenshotProtector.shared.unprotect()
+    }
+    
+    /// Enables ONLY screenshot protection (content invisible in screenshots).
+    ///
+    /// This doesn't affect screen recordings - use `enableFullAppProtection()`
+    /// if you want both.
+    func enableScreenshotProtectionOnly() {
+        ScreenshotProtector.shared.protect()
+    }
+    
+    /// Disables ONLY screenshot protection.
+    func disableScreenshotProtectionOnly() {
+        ScreenshotProtector.shared.unprotect()
     }
 }
