@@ -188,4 +188,63 @@ public extension SecureScreenConfiguration {
         self.defaultPolicy = defaultPolicy
         self.violationHandler = violationHandler
     }
+    
+    /// Enables full-app protection that shows a blank (black) screen during capture.
+    ///
+    /// This is the simplest way to protect your entire app from screen recording
+    /// and screenshots. When enabled, the entire screen will be covered with a
+    /// black overlay during any capture event.
+    ///
+    /// ## Usage
+    /// ```swift
+    /// // In AppDelegate or early initialization
+    /// SecureScreenConfiguration.shared.enableFullAppProtection()
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - violationHandler: Optional handler for capture events (logging, analytics, etc)
+    func enableFullAppProtection(violationHandler: ViolationHandler? = nil) {
+        self.isProtectionEnabled = true
+        self.defaultPolicy = .obscure(style: .blackout)
+        self.violationHandler = violationHandler
+        startProtection()
+    }
+    
+    /// Enables full-app protection with a blur effect during capture.
+    ///
+    /// Similar to `enableFullAppProtection()` but uses a blur effect instead
+    /// of a solid black overlay.
+    ///
+    /// - Parameters:
+    ///   - blurRadius: The blur radius to apply (default: 30)
+    ///   - violationHandler: Optional handler for capture events
+    func enableFullAppBlurProtection(blurRadius: CGFloat = 30, violationHandler: ViolationHandler? = nil) {
+        self.isProtectionEnabled = true
+        self.defaultPolicy = .obscure(style: .blur(radius: blurRadius))
+        self.violationHandler = violationHandler
+        startProtection()
+    }
+    
+    /// Enables full-app protection with a blocking message during capture.
+    ///
+    /// Shows a "Content Protected" message with optional reason text
+    /// when screen capture is detected.
+    ///
+    /// - Parameters:
+    ///   - reason: Optional reason to display to the user
+    ///   - violationHandler: Optional handler for capture events
+    func enableFullAppBlockProtection(reason: String? = nil, violationHandler: ViolationHandler? = nil) {
+        self.isProtectionEnabled = true
+        self.defaultPolicy = .block(reason: reason)
+        self.violationHandler = violationHandler
+        startProtection()
+    }
+    
+    /// Disables full-app protection.
+    ///
+    /// Call this to turn off global protection and remove the shield overlay.
+    func disableFullAppProtection() {
+        stopProtection()
+        isProtectionEnabled = false
+    }
 }

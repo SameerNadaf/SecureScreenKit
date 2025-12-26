@@ -22,7 +22,7 @@ import Combine
 /// ```
 ///
 /// - Important: Content inside this view will be hidden from BOTH screenshots AND screen recordings.
-@available(iOS 14.0, *)
+
 @MainActor
 public class ScreenProtectedUIView: UIView {
     
@@ -342,6 +342,6 @@ public class ScreenProtectedUIView: UIView {
 
 // MARK: - Deprecated Alias for Backward Compatibility
 
-@available(iOS 14.0, *)
+
 @available(*, deprecated, renamed: "ScreenProtectedUIView")
 public typealias SecureCombinedView = ScreenProtectedUIView

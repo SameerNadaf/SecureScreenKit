@@ -22,7 +22,7 @@ import Combine
 /// ```
 ///
 /// - Important: Content inside this view will be hidden from BOTH screenshots AND screen recordings.
-@available(iOS 14.0, *)
+
 public struct ScreenProtectedView<Content: View>: View {
     
     private let content: Content
@@ -107,7 +107,7 @@ public struct ScreenProtectedView<Content: View>: View {
 
 // MARK: - ViewModel
 
-@available(iOS 14.0, *)
+
 @MainActor
 internal final class ScreenProtectedViewModel: ObservableObject {
     
@@ -129,7 +129,7 @@ internal final class ScreenProtectedViewModel: ObservableObject {
 
 // MARK: - View Extension
 
-@available(iOS 14.0, *)
+
 public extension View {
     
     /// Makes this view completely protected from both screenshots and screen recordings.
@@ -164,11 +164,11 @@ public extension View {
 
 // MARK: - Deprecated Aliases for Backward Compatibility
 
-@available(iOS 14.0, *)
+
 @available(*, deprecated, renamed: "ScreenProtectedView")
 public typealias SecureView = ScreenProtectedView
 
-@available(iOS 14.0, *)
+
 public extension View {
     @available(*, deprecated, renamed: "screenProtected")
     func secure() -> some View {

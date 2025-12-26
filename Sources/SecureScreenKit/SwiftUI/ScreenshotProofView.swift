@@ -32,7 +32,7 @@ import UIKit
 ///
 /// - Important: This is the closest iOS allows to "screenshot-proof" content,
 ///   but it's not officially supported by Apple for this purpose.
-@available(iOS 14.0, *)
+
 public struct ScreenshotProofView<Content: View>: View {
     
     private let content: Content
@@ -54,7 +54,7 @@ public struct ScreenshotProofView<Content: View>: View {
 // MARK: - Secure Field Wrapper
 
 /// A UIViewRepresentable that wraps content in a secure text field's layer.
-@available(iOS 14.0, *)
+
 internal struct ScreenshotSecureFieldWrapper<Content: View>: UIViewRepresentable {
     
     let content: Content
@@ -96,7 +96,7 @@ internal struct ScreenshotSecureFieldWrapper<Content: View>: UIViewRepresentable
 // MARK: - Secure Container View
 
 /// UIView that uses secure text field trick to hide content from screenshots.
-@available(iOS 14.0, *)
+
 internal class ScreenshotSecureContainerView: UIView {
     
     private let textField = UITextField()
@@ -202,7 +202,7 @@ internal class ScreenshotSecureContainerView: UIView {
 /// screenshotProofView.addSecureSubview(mySecretLabel)
 /// view.addSubview(screenshotProofView)
 /// ```
-@available(iOS 14.0, *)
+
 public class ScreenshotProofUIView: UIView {
     
     private let secureTextField = UITextField()
@@ -289,7 +289,7 @@ public class ScreenshotProofUIView: UIView {
 
 // MARK: - SwiftUI View Extension
 
-@available(iOS 14.0, *)
+
 public extension View {
     
     /// Makes this view's content invisible in screenshots and screen recordings.
@@ -315,15 +315,15 @@ public extension View {
 
 // MARK: - Deprecated Aliases for Backward Compatibility
 
-@available(iOS 14.0, *)
+
 @available(*, deprecated, renamed: "ScreenshotProofView")
 public typealias SecureContentView = ScreenshotProofView
 
-@available(iOS 14.0, *)
+
 @available(*, deprecated, renamed: "ScreenshotProofUIView")
 public typealias SecureUIView = ScreenshotProofUIView
 
-@available(iOS 14.0, *)
+
 public extension View {
     @available(*, deprecated, renamed: "screenshotProtected")
     func screenshotProof() -> some View {
