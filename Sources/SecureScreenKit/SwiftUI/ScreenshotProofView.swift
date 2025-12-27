@@ -27,7 +27,6 @@ import UIKit
 ///
 /// ## Limitations
 /// - Content is ALWAYS hidden from captures (no policy control)
-/// - May have slight visual artifacts in some cases
 /// - Relies on undocumented iOS behavior (may change in future iOS versions)
 ///
 /// - Important: This is the closest iOS allows to "screenshot-proof" content,
@@ -45,17 +44,16 @@ public struct ScreenshotProofView<Content: View>: View {
     }
     
     public var body: some View {
-        ScreenshotSecureFieldWrapper {
+        ScreenshotProofRepresentable {
             content
         }
     }
 }
 
-// MARK: - Secure Field Wrapper
+// MARK: - Secure Container (UIViewRepresentable)
 
 /// A UIViewRepresentable that wraps content in a secure text field's layer.
-
-internal struct ScreenshotSecureFieldWrapper<Content: View>: UIViewRepresentable {
+internal struct ScreenshotProofRepresentable<Content: View>: UIViewRepresentable {
     
     let content: Content
     
@@ -63,24 +61,23 @@ internal struct ScreenshotSecureFieldWrapper<Content: View>: UIViewRepresentable
         self.content = content()
     }
     
-    func makeUIView(context: Context) -> ScreenshotSecureContainerView {
-        let view = ScreenshotSecureContainerView()
+    func makeUIView(context: Context) -> ScreenshotProofContainerView {
+        let containerView = ScreenshotProofContainerView()
         
         // Create hosting controller for SwiftUI content
         let hostingController = UIHostingController(rootView: content)
         hostingController.view.backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add the hosting controller's view to the secure layer
-        view.addSecureContent(hostingController.view)
+        // Add to the secure container
+        containerView.addSecureContent(hostingController.view)
         
         // Store for updates
         context.coordinator.hostingController = hostingController
         
-        return view
+        return containerView
     }
     
-    func updateUIView(_ uiView: ScreenshotSecureContainerView, context: Context) {
+    func updateUIView(_ uiView: ScreenshotProofContainerView, context: Context) {
         context.coordinator.hostingController?.rootView = content
     }
     
@@ -93,100 +90,93 @@ internal struct ScreenshotSecureFieldWrapper<Content: View>: UIViewRepresentable
     }
 }
 
-// MARK: - Secure Container View
+// MARK: - Screenshot Proof Container UIView
 
 /// UIView that uses secure text field trick to hide content from screenshots.
-
-internal class ScreenshotSecureContainerView: UIView {
+/// The key is that content added as subview of the secure text field's internal
+/// container view will be hidden from screenshots.
+internal class ScreenshotProofContainerView: UIView {
     
-    private let textField = UITextField()
-    private weak var secureLayer: CALayer?
+    private let secureTextField = UITextField()
+    private weak var secureContainer: UIView?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupSecureTextField()
+        setup()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupSecureTextField()
+        setup()
     }
     
-    private func setupSecureTextField() {
-        // Configure the text field to be secure
-        textField.isSecureTextEntry = true
-        textField.isUserInteractionEnabled = false
-        textField.translatesAutoresizingMaskIntoConstraints = false
+    private func setup() {
+        backgroundColor = .clear
         
-        // Add to view hierarchy (needed to create secure layer)
-        insertSubview(textField, at: 0)
+        // Configure secure text field
+        secureTextField.isSecureTextEntry = true
+        secureTextField.isUserInteractionEnabled = false
+        secureTextField.backgroundColor = .clear
+        secureTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        // Text field should be zero-sized and hidden
+        // Add text field to hierarchy
+        addSubview(secureTextField)
+        
+        // Make text field fill the view
         NSLayoutConstraint.activate([
-            textField.widthAnchor.constraint(equalToConstant: 0),
-            textField.heightAnchor.constraint(equalToConstant: 0),
-            textField.centerXAnchor.constraint(equalTo: centerXAnchor),
-            textField.centerYAnchor.constraint(equalTo: centerYAnchor)
+            secureTextField.topAnchor.constraint(equalTo: topAnchor),
+            secureTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
+            secureTextField.trailingAnchor.constraint(equalTo: trailingAnchor),
+            secureTextField.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
-        // Trigger layout to create secure layer
-        textField.layoutIfNeeded()
+        // Force layout to create internal structure
+        secureTextField.layoutIfNeeded()
         
-        // Find the secure layer created by iOS
-        findAndStoreSecureLayer()
+        // Find the secure container
+        findSecureContainer()
     }
     
-    private func findAndStoreSecureLayer() {
-        // The secure layer is typically in the text field's subviews
-        if let secureLayer = findSecureLayer(in: textField) {
-            self.secureLayer = secureLayer
+    private func findSecureContainer() {
+        // iOS creates a special container view inside secure text fields
+        if let container = secureTextField.subviews.first {
+            self.secureContainer = container
+            container.isUserInteractionEnabled = true
         }
-    }
-    
-    private func findSecureLayer(in view: UIView) -> CALayer? {
-        // First check direct subviews
-        for subview in view.subviews {
-            // Check if this subview has the characteristic of being the secure container
-            if let layer = subview.layer.sublayers?.first {
-                return layer
-            }
-            // Recursively search
-            if let found = findSecureLayer(in: subview) {
-                return found
-            }
-        }
-        return nil
     }
     
     /// Adds content to be protected from screenshots.
-    func addSecureContent(_ contentView: UIView) {
-        addSubview(contentView)
+    func addSecureContent(_ view: UIView) {
+        view.translatesAutoresizingMaskIntoConstraints = false
         
-        // Constrain to fill this view
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-        
-        // Move content view's layer to secure layer if found
-        if let secureLayer = secureLayer {
-            // Remove from current parent and add to secure layer
-            contentView.layer.removeFromSuperlayer()
-            secureLayer.addSublayer(contentView.layer)
+        // Try to add to secure container if found
+        if let container = secureContainer {
+            container.addSubview(view)
+            
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
+        } else {
+            // Fallback - add directly (won't have screenshot protection)
+            addSubview(view)
+            
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
         }
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        // Ensure secure layer content stays properly sized
-        if let secureLayer = secureLayer {
-            secureLayer.sublayers?.forEach { sublayer in
-                sublayer.frame = bounds
-            }
-        }
+        // Ensure secure container fills bounds
+        secureContainer?.frame = bounds
     }
 }
 
@@ -206,7 +196,7 @@ internal class ScreenshotSecureContainerView: UIView {
 public class ScreenshotProofUIView: UIView {
     
     private let secureTextField = UITextField()
-    private var contentContainer: UIView?
+    private weak var secureContainer: UIView?
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -219,20 +209,33 @@ public class ScreenshotProofUIView: UIView {
     }
     
     private func setup() {
-        // Create secure text field
+        backgroundColor = .clear
+        
+        // Configure secure text field
         secureTextField.isSecureTextEntry = true
         secureTextField.isUserInteractionEnabled = false
+        secureTextField.backgroundColor = .clear
         secureTextField.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add to hierarchy
         addSubview(secureTextField)
         
-        // Make text field invisible but present
+        // Fill entire view
         NSLayoutConstraint.activate([
-            secureTextField.widthAnchor.constraint(equalToConstant: 0),
-            secureTextField.heightAnchor.constraint(equalToConstant: 0)
+            secureTextField.topAnchor.constraint(equalTo: topAnchor),
+            secureTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
+            secureTextField.trailingAnchor.constraint(equalTo: trailingAnchor),
+            secureTextField.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
-        // Trigger secure layer creation
+        // Trigger layout
         secureTextField.layoutIfNeeded()
+        
+        // Find secure container
+        if let container = secureTextField.subviews.first {
+            secureContainer = container
+            container.isUserInteractionEnabled = true
+        }
     }
     
     /// Adds a subview that will be hidden from screenshots.
@@ -241,54 +244,34 @@ public class ScreenshotProofUIView: UIView {
     public func addSecureSubview(_ view: UIView) {
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        // Find secure layer
-        if let secureLayer = findSecureContainer() {
-            // Add view normally first
-            addSubview(view)
+        if let container = secureContainer {
+            container.addSubview(view)
             
-            // Move layer to secure container
-            view.layer.removeFromSuperlayer()
-            secureLayer.addSublayer(view.layer)
-            
-            contentContainer = view
-        } else {
-            // Fallback: just add normally
-            addSubview(view)
-            contentContainer = view
-        }
-        
-        // Keep constraints working
-        if let container = contentContainer, container.superview == self {
             NSLayoutConstraint.activate([
-                container.topAnchor.constraint(equalTo: topAnchor),
-                container.leadingAnchor.constraint(equalTo: leadingAnchor),
-                container.trailingAnchor.constraint(equalTo: trailingAnchor),
-                container.bottomAnchor.constraint(equalTo: bottomAnchor)
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
+        } else {
+            addSubview(view)
+            
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor)
             ])
         }
     }
     
-    private func findSecureContainer() -> CALayer? {
-        for subview in secureTextField.subviews {
-            if let layer = subview.layer.sublayers?.first {
-                return layer
-            }
-        }
-        return secureTextField.layer.sublayers?.first
-    }
-    
     public override func layoutSubviews() {
         super.layoutSubviews()
-        
-        // Update content layer frame
-        if let layer = findSecureContainer() {
-            layer.sublayers?.forEach { $0.frame = bounds }
-        }
+        secureContainer?.frame = bounds
     }
 }
 
 // MARK: - SwiftUI View Extension
-
 
 public extension View {
     
@@ -315,14 +298,11 @@ public extension View {
 
 // MARK: - Deprecated Aliases for Backward Compatibility
 
-
 @available(*, deprecated, renamed: "ScreenshotProofView")
 public typealias SecureContentView = ScreenshotProofView
 
-
 @available(*, deprecated, renamed: "ScreenshotProofUIView")
 public typealias SecureUIView = ScreenshotProofUIView
-
 
 public extension View {
     @available(*, deprecated, renamed: "screenshotProtected")

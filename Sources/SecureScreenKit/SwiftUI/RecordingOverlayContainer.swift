@@ -62,7 +62,7 @@ public struct RecordingOverlayContainer<Content: View>: View {
     private let content: Content
     
     /// View model for observing capture state.
-    @ObservedObject private var viewModel: RecordingOverlayViewModel
+    @StateObject private var viewModel = RecordingOverlayViewModel()
     
     // MARK: - Initialization
     
@@ -78,7 +78,6 @@ public struct RecordingOverlayContainer<Content: View>: View {
         self.screenIdentifier = nil
         self.userRole = nil
         self.content = content()
-        self.viewModel = RecordingOverlayViewModel()
     }
     
     /// Creates a recording overlay container with a specified policy.
@@ -96,7 +95,6 @@ public struct RecordingOverlayContainer<Content: View>: View {
         self.screenIdentifier = nil
         self.userRole = nil
         self.content = content()
-        self.viewModel = RecordingOverlayViewModel()
     }
     
     /// Creates a recording overlay container with policy and condition.
@@ -116,7 +114,6 @@ public struct RecordingOverlayContainer<Content: View>: View {
         self.screenIdentifier = nil
         self.userRole = nil
         self.content = content()
-        self.viewModel = RecordingOverlayViewModel()
     }
     
     /// Creates a recording overlay container with full configuration.
@@ -140,13 +137,12 @@ public struct RecordingOverlayContainer<Content: View>: View {
         self.screenIdentifier = screenIdentifier
         self.userRole = userRole
         self.content = content()
-        self.viewModel = RecordingOverlayViewModel()
     }
     
     // MARK: - Body
     
     public var body: some View {
-        content
+        ContentHostingWrapper(content: content)
             .overlay(
                 Group {
                     if viewModel.shouldShowProtection(
@@ -321,6 +317,51 @@ internal struct CustomOverlayView: UIViewRepresentable {
     
     func updateUIView(_ uiView: UIView, context: Context) {
         // No updates needed
+    }
+}
+
+// MARK: - Content Hosting Wrapper
+
+/// UIViewRepresentable that wraps SwiftUI content with proper sizing behavior
+/// This matches how ScreenshotProofView handles content via UIHostingController
+internal struct ContentHostingWrapper<Content: View>: UIViewRepresentable {
+    let content: Content
+    
+    func makeUIView(context: Context) -> UIView {
+        let hostingController = UIHostingController(rootView: content)
+        hostingController.view.backgroundColor = .clear
+        
+        // Ensure proper sizing
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Create container
+        let container = UIView()
+        container.backgroundColor = .clear
+        container.addSubview(hostingController.view)
+        
+        // Constrain hosting view to container edges
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: container.topAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+        
+        context.coordinator.hostingController = hostingController
+        
+        return container
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        context.coordinator.hostingController?.rootView = content
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    class Coordinator {
+        var hostingController: UIHostingController<Content>?
     }
 }
 

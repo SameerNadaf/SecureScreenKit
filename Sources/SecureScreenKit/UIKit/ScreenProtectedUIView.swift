@@ -38,8 +38,8 @@ public class ScreenProtectedUIView: UIView {
     // MARK: - Private Properties
     
     private let secureTextField = UITextField()
-    private var contentContainer: UIView?
-    private var secureLayer: CALayer?
+    private var secureContainerView: UIView?
+    private weak var contentView: UIView?
     
     private var cancellables = Set<AnyCancellable>()
     private let monitor = CaptureMonitor.shared
@@ -83,52 +83,35 @@ public class ScreenProtectedUIView: UIView {
     }
     
     private func setupSecureTextField() {
-        // Configure the text field to be secure (this creates the secure layer)
+        // Configure the text field to be secure (this creates the secure container)
         secureTextField.isSecureTextEntry = true
         secureTextField.isUserInteractionEnabled = false
+        secureTextField.backgroundColor = .clear
         secureTextField.translatesAutoresizingMaskIntoConstraints = false
         
         // Add to view hierarchy
-        insertSubview(secureTextField, at: 0)
+        addSubview(secureTextField)
         
-        // Make text field invisible but present
+        // Fill entire view
         NSLayoutConstraint.activate([
-            secureTextField.widthAnchor.constraint(equalToConstant: 0),
-            secureTextField.heightAnchor.constraint(equalToConstant: 0),
-            secureTextField.centerXAnchor.constraint(equalTo: centerXAnchor),
-            secureTextField.centerYAnchor.constraint(equalTo: centerYAnchor)
+            secureTextField.topAnchor.constraint(equalTo: topAnchor),
+            secureTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
+            secureTextField.trailingAnchor.constraint(equalTo: trailingAnchor),
+            secureTextField.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
-        // Trigger layout to create secure layer
+        // Trigger layout to create secure container
         secureTextField.layoutIfNeeded()
         
-        // Find the secure layer
-        DispatchQueue.main.async { [weak self] in
-            self?.findAndStoreSecureLayer()
-        }
+        // Find the secure container
+        findSecureContainer()
     }
     
-    private func findAndStoreSecureLayer() {
-        // Search for secure layer in text field subviews
-        for subview in secureTextField.subviews {
-            if let layer = subview.layer.sublayers?.first {
-                self.secureLayer = layer
-                
-                // If content was already added, move it to secure layer
-                if let content = contentContainer {
-                    moveContentToSecureLayer(content)
-                }
-                return
-            }
-        }
-        
-        // Fallback: check layer sublayers
-        if let layer = secureTextField.layer.sublayers?.first {
-            self.secureLayer = layer
-            
-            if let content = contentContainer {
-                moveContentToSecureLayer(content)
-            }
+    private func findSecureContainer() {
+        // iOS creates a special container view inside secure text fields
+        // We need to find this view and add our content to it
+        if let containerView = secureTextField.subviews.first {
+            self.secureContainerView = containerView
         }
     }
     
@@ -138,37 +121,41 @@ public class ScreenProtectedUIView: UIView {
     ///
     /// - Parameter view: The view to protect.
     public func addSecureContent(_ view: UIView) {
-        // Remove existing content
-        contentContainer?.removeFromSuperview()
+        // Remove old content
+        contentView?.removeFromSuperview()
+        
+        // Try to find secure container if not already found
+        if secureContainerView == nil {
+            findSecureContainer()
+        }
         
         view.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(view)
         
-        // Set constraints
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: topAnchor),
-            view.leadingAnchor.constraint(equalTo: leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-        
-        contentContainer = view
-        
-        // Move to secure layer if available (for screenshot protection)
-        if secureLayer != nil {
-            moveContentToSecureLayer(view)
+        // Add to secure container for screenshot protection
+        if let secureContainer = secureContainerView {
+            secureContainer.addSubview(view)
+            
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: secureContainer.topAnchor),
+                view.leadingAnchor.constraint(equalTo: secureContainer.leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: secureContainer.trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: secureContainer.bottomAnchor)
+            ])
+        } else {
+            // Fallback: add as regular subview
+            addSubview(view)
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ])
         }
+        
+        contentView = view
         
         // Start recording monitoring
         startMonitoring()
-    }
-    
-    private func moveContentToSecureLayer(_ view: UIView) {
-        guard let secureLayer = secureLayer else { return }
-        
-        // Move the view's layer to secure layer for screenshot protection
-        view.layer.removeFromSuperlayer()
-        secureLayer.addSublayer(view.layer)
     }
     
     // MARK: - Recording Protection
@@ -316,12 +303,8 @@ public class ScreenProtectedUIView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         
-        // Ensure content layer stays properly sized in secure layer
-        if let secureLayer = secureLayer {
-            secureLayer.sublayers?.forEach { sublayer in
-                sublayer.frame = bounds
-            }
-        }
+        // Ensure secure container fills bounds
+        secureContainerView?.frame = bounds
     }
     
     // MARK: - Lifecycle
@@ -329,7 +312,7 @@ public class ScreenProtectedUIView: UIView {
     public override func willMove(toWindow newWindow: UIWindow?) {
         super.willMove(toWindow: newWindow)
         
-        if newWindow != nil && contentContainer != nil {
+        if newWindow != nil && contentView != nil {
             startMonitoring()
         }
     }
@@ -341,7 +324,6 @@ public class ScreenProtectedUIView: UIView {
 }
 
 // MARK: - Deprecated Alias for Backward Compatibility
-
 
 @available(*, deprecated, renamed: "ScreenProtectedUIView")
 public typealias SecureCombinedView = ScreenProtectedUIView

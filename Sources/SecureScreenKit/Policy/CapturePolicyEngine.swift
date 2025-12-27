@@ -50,9 +50,12 @@ internal final class CapturePolicyEngine {
     /// Resolves what action should be taken based on policy, condition, and context.
     ///
     /// This is the primary entry point for protection decisions. It considers:
-    /// 1. Global protection enabled flag
-    /// 2. Condition evaluation
+    /// 1. Condition evaluation
+    /// 2. Current capture state
     /// 3. Policy requirements
+    ///
+    /// - Note: Component-level protection works independently of global `isProtectionEnabled` flag.
+    ///   The global flag only affects `shouldProtectWithDefaultPolicy()`.
     ///
     /// - Parameters:
     ///   - policy: The protection policy to evaluate.
@@ -64,11 +67,6 @@ internal final class CapturePolicyEngine {
         condition: (any CaptureCondition)?,
         context: CaptureContext
     ) -> ResolvedAction {
-        
-        // Check global kill switch
-        guard SecureScreenConfiguration.shared.isProtectionEnabled else {
-            return .none
-        }
         
         // If policy is always allow, no action needed
         guard policy.requiresProtection else {

@@ -189,95 +189,88 @@ public extension SecureScreenConfiguration {
         self.violationHandler = violationHandler
     }
     
-    /// Enables full-app protection that shows a blank (black) screen during capture.
+    /// Enables full-app protection from screen recordings.
     ///
-    /// This is the simplest way to protect your entire app from screen recording
-    /// AND screenshots. When enabled:
-    /// - The entire screen will be covered with a black overlay during recording
-    /// - Content will be invisible in screenshots (using secure text field trick)
+    /// When enabled, a black overlay covers the entire screen during recording.
     ///
     /// ## Usage
     /// ```swift
-    /// // In AppDelegate or early initialization
+    /// // In AppDelegate or App.init()
     /// SecureScreenConfiguration.shared.enableFullAppProtection()
     /// ```
     ///
+    /// - Note: For screenshot protection, use `ScreenshotProofView` to wrap
+    ///   specific sensitive content.
+    ///
     /// - Parameters:
     ///   - violationHandler: Optional handler for capture events (logging, analytics, etc)
-    func enableFullAppProtection(violationHandler: ViolationHandler? = nil) {
+    public func enableFullAppProtection(violationHandler: ViolationHandler? = nil) {
         self.isProtectionEnabled = true
         self.defaultPolicy = .obscure(style: .blackout)
-        self.violationHandler = violationHandler
+        if let handler = violationHandler {
+            self.violationHandler = handler
+        }
         
-        // Enable screenshot protection (makes content blank in screenshots)
-        ScreenshotProtector.shared.protect()
+        // Enable recording protection overlay
+        FullAppProtector.shared.enable()
         
-        // Start recording protection (shows overlay during recording)
+        // Enable component-level recording protection
         startProtection()
     }
     
-    /// Enables full-app protection with a blur effect during capture.
+    /// Enables full-app protection with a blur effect during recording.
     ///
     /// Similar to `enableFullAppProtection()` but uses a blur effect instead
-    /// of a solid black overlay for recordings. Screenshots will still show blank.
+    /// of a solid black overlay.
     ///
     /// - Parameters:
     ///   - blurRadius: The blur radius to apply (default: 30)
     ///   - violationHandler: Optional handler for capture events
-    func enableFullAppBlurProtection(blurRadius: CGFloat = 30, violationHandler: ViolationHandler? = nil) {
+    public func enableFullAppBlurProtection(blurRadius: CGFloat = 30, violationHandler: ViolationHandler? = nil) {
         self.isProtectionEnabled = true
         self.defaultPolicy = .obscure(style: .blur(radius: blurRadius))
-        self.violationHandler = violationHandler
+        if let handler = violationHandler {
+            self.violationHandler = handler
+        }
         
-        // Enable screenshot protection
-        ScreenshotProtector.shared.protect()
+        // Enable recording protection overlay
+        FullAppProtector.shared.enable()
         
-        // Start recording protection
+        // Enable component-level recording protection
         startProtection()
     }
     
-    /// Enables full-app protection with a blocking message during capture.
+    /// Enables full-app protection with a blocking message during recording.
     ///
     /// Shows a "Content Protected" message with optional reason text
-    /// when screen capture is detected. Screenshots will show blank.
+    /// when screen recording is detected.
     ///
     /// - Parameters:
     ///   - reason: Optional reason to display to the user
     ///   - violationHandler: Optional handler for capture events
-    func enableFullAppBlockProtection(reason: String? = nil, violationHandler: ViolationHandler? = nil) {
+    public func enableFullAppBlockProtection(reason: String? = nil, violationHandler: ViolationHandler? = nil) {
         self.isProtectionEnabled = true
         self.defaultPolicy = .block(reason: reason)
-        self.violationHandler = violationHandler
+        if let handler = violationHandler {
+            self.violationHandler = handler
+        }
         
-        // Enable screenshot protection
-        ScreenshotProtector.shared.protect()
+        // Enable recording protection overlay
+        FullAppProtector.shared.enable()
         
-        // Start recording protection
+        // Enable component-level recording protection
         startProtection()
     }
     
-    /// Disables full-app protection.
+    /// Disables full-app recording protection.
     ///
-    /// Call this to turn off global protection and remove the shield overlay.
-    func disableFullAppProtection() {
+    /// Call this to turn off global protection.
+    public func disableFullAppProtection() {
         // Disable recording protection
         stopProtection()
         isProtectionEnabled = false
         
-        // Disable screenshot protection
-        ScreenshotProtector.shared.unprotect()
-    }
-    
-    /// Enables ONLY screenshot protection (content invisible in screenshots).
-    ///
-    /// This doesn't affect screen recordings - use `enableFullAppProtection()`
-    /// if you want both.
-    func enableScreenshotProtectionOnly() {
-        ScreenshotProtector.shared.protect()
-    }
-    
-    /// Disables ONLY screenshot protection.
-    func disableScreenshotProtectionOnly() {
-        ScreenshotProtector.shared.unprotect()
+        // Disable overlay
+        FullAppProtector.shared.disable()
     }
 }
