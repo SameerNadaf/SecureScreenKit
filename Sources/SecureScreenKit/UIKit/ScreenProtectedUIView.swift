@@ -112,6 +112,7 @@ public class ScreenProtectedUIView: UIView {
         // We need to find this view and add our content to it
         if let containerView = secureTextField.subviews.first {
             self.secureContainerView = containerView
+            containerView.isUserInteractionEnabled = true
         }
     }
     
@@ -136,10 +137,10 @@ public class ScreenProtectedUIView: UIView {
             secureContainer.addSubview(view)
             
             NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: secureContainer.topAnchor),
-                view.leadingAnchor.constraint(equalTo: secureContainer.leadingAnchor),
-                view.trailingAnchor.constraint(equalTo: secureContainer.trailingAnchor),
-                view.bottomAnchor.constraint(equalTo: secureContainer.bottomAnchor)
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor)
             ])
         } else {
             // Fallback: add as regular subview
