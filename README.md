@@ -797,6 +797,11 @@ view.removeFromScreenshotProofContainer()
 
 ## Examples
 
+### Demo Application
+
+A complete demo application showcasing all features is available here:
+[SecureScreenKitDemo](https://github.com/SameerNadaf/SecureScreenKitDemo)
+
 ### Banking App
 
 ```swift
